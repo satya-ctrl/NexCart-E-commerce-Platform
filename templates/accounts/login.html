@@ -9,13 +9,19 @@
 
     <div class="w-full max-w-md relative z-10">
         <div class="text-center mb-8">
+            {% if role == 'seller' %}
+            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-500 to-sky-600 flex items-center justify-center text-white text-2xl font-bold font-logo mx-auto mb-4 glowing-logo">N</div>
+            <h1 class="font-display font-bold text-3xl gradient-text">Seller Sign In</h1>
+            <p class="text-slate-400 mt-2 text-sm">Sign in to NexCart Seller Center</p>
+            {% else %}
             <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-600 to-cyan-500 flex items-center justify-center text-white text-2xl font-bold font-logo mx-auto mb-4 glowing-logo">N</div>
             <h1 class="font-display font-bold text-3xl gradient-text">Welcome Back</h1>
-            <p class="text-slate-400 mt-2 text-sm">Sign in to your NexCart AI account</p>
+            <p class="text-slate-400 mt-2 text-sm">Sign in to your NexCart customer account</p>
+            {% endif %}
         </div>
         
         <div class="glass rounded-3xl p-8 border border-violet-500/10 hover:border-violet-500/20 transition-all shadow-2xl">
-            <form method="POST">
+            <form method="POST" action="?role={{ role }}">
                 {% csrf_token %}
                 <div class="mb-4">
                     <label class="block text-xs text-slate-400 mb-1.5 font-semibold uppercase tracking-wide">Username</label>
@@ -47,11 +53,15 @@
                 </div>
                 {% endif %}
 
+                {% if role == 'seller' %}
+                <button type="submit" class="w-full py-3 bg-gradient-to-r from-cyan-500 to-sky-500 hover:shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:-translate-y-0.5 rounded-2xl text-white font-semibold text-lg transition-all active:scale-[0.98]">Sign In as Seller</button>
+                {% else %}
                 <button type="submit" class="w-full btn-primary py-3 rounded-2xl text-white font-semibold text-lg transition-transform active:scale-[0.98]">Sign In</button>
+                {% endif %}
             </form>
             
             <div class="text-center mt-6 text-sm text-slate-500">
-                Don't have an account? <a href="/accounts/register/" class="text-violet-400 hover:text-violet-300 font-medium transition-colors">Register here</a>
+                Don't have an account? <a href="/accounts/register/?role={{ role }}" class="text-violet-400 hover:text-violet-300 font-medium transition-colors">Register here</a>
             </div>
             
             <div class="mt-6 pt-5 border-t border-white/10 text-center">

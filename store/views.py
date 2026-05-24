@@ -90,7 +90,7 @@ def add_to_cart(request, pk):
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         return JsonResponse({'success': True, 'count': cart.items.count()})
     messages.success(request, f"'{product.name}' added to cart!")
-    return redirect('cart')
+    return redirect('store:cart')
 
 
 @login_required
@@ -105,7 +105,7 @@ def cart(request):
 def remove_from_cart(request, item_id):
     item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
     item.delete()
-    return redirect('cart')
+    return redirect('store:cart')
 
 
 @login_required
@@ -120,7 +120,7 @@ def checkout(request):
             OrderItem.objects.create(order=order, product=item.product, quantity=item.quantity, price=item.product.our_price)
         cart_obj.items.all().delete()
         messages.success(request, f"Order #{order.id} placed successfully! 🎉")
-        return redirect('order_confirmation', pk=order.id)
+        return redirect('store:order_confirmation', pk=order.id)
     return render(request, 'store/checkout.html', {'items': items, 'total': total})
 
 
@@ -147,7 +147,7 @@ def toggle_wishlist(request, pk):
         added = True
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         return JsonResponse({'added': added})
-    return redirect('product_detail', pk=pk)
+    return redirect('store:product_detail', pk=pk)
 
 
 @login_required
@@ -158,7 +158,7 @@ def add_review(request, pk):
         comment = request.POST.get('comment')
         Review.objects.create(product=product, user=request.user, rating=rating, comment=comment)
         messages.success(request, "Review submitted!")
-    return redirect('product_detail', pk=pk)
+    return redirect('store:product_detail', pk=pk)
 
 
 @login_required
@@ -168,12 +168,12 @@ def dashboard(request):
     return render(request, 'store/dashboard.html', {'orders': orders, 'wishlist_count': wishlist_count})
 
 
-@login_required(login_url='seller_login')
+@login_required(login_url='store:seller_login')
 def seller_dashboard(request):
     if not request.user.groups.filter(name='Sellers').exists():
         messages.error(request, "Access Denied. You must log in with a Seller account to view the dashboard.")
         logout(request)
-        return redirect('seller_login')
+        return redirect('store:seller_login')
 
     categories = Category.objects.all()
     if request.method == 'POST':
@@ -212,7 +212,7 @@ def seller_dashboard(request):
             tags=tags
         )
         messages.success(request, f"Product '{name}' successfully uploaded to NexCart! 🚀")
-        return redirect('seller_dashboard')
+        return redirect('store:seller_dashboard')
 
     products = Product.objects.all().order_by('-created_at')
     return render(request, 'store/seller.html', {'categories': categories, 'products': products})
@@ -221,7 +221,7 @@ def seller_dashboard(request):
 def seller_login(request):
     if request.user.is_authenticated:
         if request.user.groups.filter(name='Sellers').exists():
-            return redirect('seller_dashboard')
+            return redirect('store:seller_dashboard')
         else:
             logout(request)
 
@@ -232,10 +232,10 @@ def seller_login(request):
             if user.groups.filter(name='Sellers').exists():
                 login(request, user)
                 messages.success(request, f"Welcome back to Seller Center, {user.first_name or user.username}! 💼")
-                return redirect('seller_dashboard')
+                return redirect('store:seller_dashboard')
             else:
                 messages.error(request, "This account is not registered as a Seller. Please register a seller account below.")
-                return redirect('seller_login')
+                return redirect('store:seller_login')
     else:
         form = AuthenticationForm()
     return render(request, 'store/seller_login.html', {'form': form})
@@ -244,7 +244,7 @@ def seller_login(request):
 def seller_register(request):
     if request.user.is_authenticated:
         if request.user.groups.filter(name='Sellers').exists():
-            return redirect('seller_dashboard')
+            return redirect('store:seller_dashboard')
 
     if request.method == 'POST':
         form = UserRegisterForm(request.POST)
@@ -254,7 +254,7 @@ def seller_register(request):
             user.groups.add(group)
             login(request, user)
             messages.success(request, f"Welcome to NexCart Seller Center, {user.first_name or user.username}! Start listing your inventory. 🚀")
-            return redirect('seller_dashboard')
+            return redirect('store:seller_dashboard')
     else:
         form = UserRegisterForm()
     return render(request, 'store/seller_register.html', {'form': form})
