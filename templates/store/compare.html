@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% block title %}Compare Prices — {{ product.name }}{% endblock %}
+{% block content %}
+<div class="max-w-4xl mx-auto px-6 py-10">
+    <div class="mb-8">
+        <a href="/product/{{ product.id }}/" class="text-violet-400 text-sm hover:text-violet-300">← Back to product</a>
+        <h1 class="font-display font-bold text-3xl mt-3 mb-1">Price Comparison</h1>
+        <p class="text-slate-400">{{ product.name }}</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
+        <!-- AMAZON -->
+        <div class="glass rounded-3xl p-6 {% if product.amazon_price and product.amazon_price == product.best_price %}border-green-500/30{% else %}border-white/10{% endif %}">
+            <div class="text-4xl mb-3 text-center">🛒</div>
+            <div class="text-center font-display font-bold text-xl text-orange-400 mb-1">Amazon India</div>
+            <div class="text-center text-slate-500 text-sm mb-4">amazon.in</div>
+            {% if product.amazon_price %}
+            <div class="text-center font-display font-bold text-4xl text-white mb-2">₹{{ product.amazon_price }}</div>
+            <div class="progress-bar mb-4"><div class="progress-fill" style="width:{% if product.amazon_price %}{{ product.amazon_price|floatformat:'0' }}{% else %}0{% endif %}%"></div></div>
+            {% if product.amazon_url %}
+            <a href="{{ product.amazon_url }}" target="_blank" class="block text-center py-2.5 rounded-xl border border-orange-500/40 text-orange-400 text-sm hover:bg-orange-500/10 transition-colors">Visit Amazon →</a>
+            {% endif %}
+            {% else %}
+            <div class="text-center text-slate-500 py-4">Price not available</div>
+            {% endif %}
+        </div>
+
+        <!-- OUR PRICE -->
+        <div class="glass rounded-3xl p-6 border-green-500/40 relative overflow-hidden">
+            <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-violet-600 to-cyan-500"></div>
+            <div class="absolute top-3 right-3 bg-green-500 text-white text-xs px-2 py-0.5 rounded-full font-bold">BEST!</div>
+            <div class="text-4xl mb-3 text-center">⚡</div>
+            <div class="text-center font-display font-bold text-xl gradient-text mb-1">NexCart AI</div>
+            <div class="text-center text-slate-500 text-sm mb-4">nexcart.ai</div>
+            <div class="text-center font-display font-bold text-4xl gradient-text mb-2">₹{{ product.our_price }}</div>
+            {% if product.discount_percent > 0 %}
+            <div class="text-center text-green-400 text-sm mb-3 font-semibold">{{ product.discount_percent }}% cheaper than Amazon!</div>
+            {% endif %}
+            <button onclick="{% if user.is_authenticated %}addToCart({{ product.id }}){% else %}window.location='/accounts/login/'{% endif %}" class="w-full btn-primary py-2.5 rounded-xl text-white text-sm font-semibold">
+                Buy Here — Best Price
+            </button>
+        </div>
+
+        <!-- FLIPKART -->
+        <div class="glass rounded-3xl p-6 {% if product.flipkart_price and product.flipkart_price == product.best_price %}border-green-500/30{% else %}border-white/10{% endif %}">
+            <div class="text-4xl mb-3 text-center">🔵</div>
+            <div class="text-center font-display font-bold text-xl text-blue-400 mb-1">Flipkart</div>
+            <div class="text-center text-slate-500 text-sm mb-4">flipkart.com</div>
+            {% if product.flipkart_price %}
+            <div class="text-center font-display font-bold text-4xl text-white mb-2">₹{{ product.flipkart_price }}</div>
+            <div class="progress-bar mb-4"><div class="progress-fill" style="width:{% if product.flipkart_price %}80{% else %}0{% endif %}%"></div></div>
+            {% if product.flipkart_url %}
+            <a href="{{ product.flipkart_url }}" target="_blank" class="block text-center py-2.5 rounded-xl border border-blue-500/40 text-blue-400 text-sm hover:bg-blue-500/10 transition-colors">Visit Flipkart →</a>
+            {% endif %}
+            {% else %}
+            <div class="text-center text-slate-500 py-4">Price not available</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- SAVINGS TABLE -->
+    <div class="glass rounded-3xl p-6 mb-8">
+        <h2 class="font-display font-bold text-xl mb-4">💰 Your Savings</h2>
+        <div class="grid grid-cols-2 gap-4">
+            {% if product.amazon_price %}
+            <div class="glass rounded-2xl p-4">
+                <div class="text-slate-400 text-sm">vs Amazon</div>
+                <div class="font-display font-bold text-2xl {% if product.amazon_price > product.our_price %}text-green-400{% else %}text-red-400{% endif %} mt-1">
+                    {% if product.amazon_price > product.our_price %}Save ₹{{ product.amazon_price|add:"-"|add:product.our_price }}{% else %}No savings{% endif %}
+                </div>
+            </div>
+            {% endif %}
+            {% if product.flipkart_price %}
+            <div class="glass rounded-2xl p-4">
+                <div class="text-slate-400 text-sm">vs Flipkart</div>
+                <div class="font-display font-bold text-2xl {% if product.flipkart_price > product.our_price %}text-green-400{% else %}text-red-400{% endif %} mt-1">
+                    {% if product.flipkart_price > product.our_price %}Save ₹{{ product.flipkart_price|add:"-"|add:product.our_price }}{% else %}No savings{% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- ECO VALUE COMPARISON -->
+    <div class="glass rounded-3xl p-6 mb-8 border border-emerald-500/20">
+        <h2 class="font-display font-bold text-xl mb-4 flex items-center gap-2">
+            <i class="fas fa-leaf text-emerald-400"></i> Eco-Value Comparison
+        </h2>
+        <div class="space-y-4">
+            <div class="flex items-center justify-between text-sm py-2 border-b border-white/5">
+                <span class="text-slate-400">⚡ NexCart AI Eco Score</span>
+                <span class="text-emerald-400 font-bold flex items-center gap-1.5">
+                    <i class="fas fa-leaf text-xs"></i> {{ product.eco_rating }}/100 ({% if product.eco_rating >= 90 %}Excellent{% elif product.eco_rating >= 80 %}Good{% elif product.eco_rating >= 60 %}Moderate{% else %}Low{% endif %})
+                </span>
+            </div>
+            <div class="flex items-center justify-between text-sm py-2 border-b border-white/5">
+                <span class="text-slate-400">🛒 Amazon Sustainability Data</span>
+                <span class="text-slate-500">Not verified / Unspecified</span>
+            </div>
+            <div class="flex items-center justify-between text-sm py-2">
+                <span class="text-slate-400">🔵 Flipkart Sustainability Data</span>
+                <span class="text-slate-500">Not verified / Unspecified</span>
+            </div>
+        </div>
+        <div class="mt-4 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-4 text-xs text-slate-300">
+            <strong class="text-emerald-400">🌿 NexCart Exclusive Feature:</strong> NexCart AI evaluates the ecological rating of products dynamically, helping you prioritize items that match your carbon footprint reduction goals. Amazon and Flipkart do not list verified product-level sustainability metrics directly for this item.
+        </div>
+    </div>
+
+    <!-- TRUST SIGNAL -->
+    <div class="glass rounded-2xl p-4 text-xs text-slate-500 border border-violet-500/10">
+        <i class="fas fa-shield-alt text-violet-400 mr-1"></i>
+        <strong class="text-slate-400">Price Accuracy:</strong> Prices are updated regularly from Amazon India and Flipkart. NexCart AI always surfaces the most competitive price — so you never overpay.
+    </div>
+</div>
+{% endblock %}

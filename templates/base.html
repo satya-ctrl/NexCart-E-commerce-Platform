@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}NexCart AI — Smart Shopping{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Apply theme immediately to prevent FOUC
+        (function() {
+            const savedTheme = localStorage.getItem('nexcart-theme') || 'dark';
+            if (savedTheme === 'light') {
+                document.documentElement.classList.add('light-theme');
+            } else {
+                document.documentElement.classList.remove('light-theme');
+            }
+        })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --accent: #7C3AED;
+            --accent2: #06B6D4;
+            --dark: #000000;
+            --card: #0C0C0F;
+
+            --brand-bg: #000000;
+            --brand-card: #0C0C0F;
+            --brand-text: #E2E8F0;
+            --brand-text-muted: #94A3B8;
+            --brand-border: rgba(124, 58, 237, 0.12);
+            --brand-glass: rgba(8, 8, 10, 0.6);
+        }
+
+        .light-theme {
+            --brand-bg: #F8FAFC;
+            --brand-card: #FFFFFF;
+            --brand-text: #0F172A;
+            --brand-text-muted: #475569;
+            --brand-border: rgba(109, 40, 217, 0.12);
+            --brand-glass: rgba(255, 255, 255, 0.75);
+            --accent: #6D28D9;
+            --accent2: #0891B2;
+        }
+
+        * { font-family: 'DM Sans', sans-serif; }
+        h1,h2,h3,.font-display { font-family: 'Syne', sans-serif; }
+        body { 
+            background: var(--brand-bg); 
+            color: var(--brand-text);
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .glass {
+            background: var(--brand-glass);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--brand-border);
+            transition: all 0.3s ease;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), #4F46E5);
+            transition: all 0.3s;
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(124,58,237,0.4); }
+        .btn-cyan {
+            background: linear-gradient(135deg, var(--accent2), #0284C7);
+            transition: all 0.3s;
+        }
+        .btn-cyan:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(6,182,212,0.4); }
+
+        .product-card {
+            background: var(--brand-card);
+            border: 1px solid var(--brand-border);
+            transition: all 0.3s;
+        }
+        .product-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 60px rgba(124,58,237,0.2);
+        }
+
+        /* Light Theme Overrides to gracefully style the entire site */
+        .light-theme .text-slate-400 { color: #475569 !important; }
+        .light-theme .text-slate-300 { color: #1e293b !important; }
+        .light-theme .text-slate-200 { color: #0f172a !important; }
+        .light-theme .text-slate-100 { color: #09090b !important; }
+        .light-theme .text-slate-500 { color: #64748b !important; }
+        .light-theme .text-slate-600 { color: #475569 !important; }
+        .light-theme .text-white { color: #0F172A !important; }
+        .light-theme .bg-white\/5 { background-color: rgba(15, 23, 42, 0.05) !important; }
+        .light-theme .bg-white\/10 { background-color: rgba(15, 23, 42, 0.08) !important; }
+        .light-theme .border-white\/10 { border-color: rgba(15, 23, 42, 0.08) !important; }
+        .light-theme .border-white\/5 { border-color: rgba(15, 23, 42, 0.05) !important; }
+        .light-theme .divide-white\/5 > * { border-color: rgba(15, 23, 42, 0.08) !important; }
+        .light-theme input, .light-theme select, .light-theme textarea {
+            background-color: rgba(255, 255, 255, 0.8) !important;
+            border-color: rgba(15, 23, 42, 0.12) !important;
+            color: #0f172a !important;
+        }
+        .light-theme input:focus { border-color: var(--accent) !important; }
+        .light-theme #chatbot-panel { background: #FFFFFF !important; border-color: var(--brand-border) !important; }
+        .light-theme .msg-bot { background: rgba(109, 40, 217, 0.06) !important; color: #1E1B4B !important; }
+        .light-theme #chat-input { background: rgba(15, 23, 42, 0.03) !important; border-color: rgba(15, 23, 42, 0.08) !important; color: #0F172A !important; }
+        .light-theme footer { background: #FFFFFF !important; border-top: 1px solid var(--brand-border) !important; }
+        .light-theme nav { background: var(--brand-glass) !important; border-bottom: 1px solid var(--brand-border) !important; }
+        .light-theme .product-card { background: #FFFFFF !important; border-color: var(--brand-border) !important; }
+        .light-theme .product-card:hover { border-color: var(--accent) !important; box-shadow: 0 20px 40px rgba(109,40,217,0.08) !important; }
+        .light-theme .ai-badge { background: rgba(109, 40, 217, 0.08) !important; border-color: rgba(109, 40, 217, 0.2) !important; color: #6D28D9 !important; }
+        
+        /* Background Animated Blobs */
+        @keyframes floatBlob {
+            0% { transform: translate(0px, 0px) scale(1); }
+            33% { transform: translate(30px, -50px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.95); }
+            100% { transform: translate(0px, 0px) scale(1); }
+        }
+        .bg-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.15;
+            mix-blend-mode: screen;
+            animation: floatBlob 10s infinite alternate ease-in-out;
+            transition: opacity 0.3s ease;
+        }
+        .light-theme .bg-blob {
+            mix-blend-mode: multiply;
+            opacity: 0.08;
+        }
+
+        /* Settings Drawer styling */
+        #settings-drawer {
+            background: var(--brand-card);
+            border-left: 1px solid var(--brand-border);
+            color: var(--brand-text);
+        }
+        .nav-link { transition: color 0.2s; }
+        .nav-link:hover { color: #7C3AED; }
+
+        /* Glowing Logo Style (Static & Glowing in white) */
+        .glowing-logo {
+            filter: drop-shadow(0 0 6px rgba(124, 58, 237, 0.75)) drop-shadow(0 0 2px rgba(6, 182, 212, 0.4));
+            transition: filter 0.3s ease;
+        }
+        .glowing-logo:hover {
+            filter: drop-shadow(0 0 10px rgba(124, 58, 237, 0.95)) drop-shadow(0 0 4px rgba(6, 182, 212, 0.6));
+        }
+
+        @keyframes walkingLetter {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-3px) rotate(-4deg); }
+            50% { transform: translateY(0) rotate(0deg); }
+            75% { transform: translateY(-3px) rotate(4deg); }
+        }
+        .walking-letter {
+            display: inline-block;
+            animation: walkingLetter 1.2s infinite ease-in-out;
+        }
+        .logo-text-glow {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            color: #FFFFFF !important;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.4), 0 0 2px rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        .logo-text-glow:hover {
+            text-shadow: 0 0 12px rgba(255, 255, 255, 0.7), 0 0 4px rgba(255, 255, 255, 0.4);
+        }
+
+        /* Chatbot */
+        #chatbot-panel {
+            position: fixed; bottom: 90px; right: 20px;
+            width: 360px; height: 500px;
+            background: var(--brand-card);
+            border: 1px solid var(--brand-border);
+            border-radius: 20px;
+            display: none;
+            flex-direction: column;
+            z-index: 1000;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.6);
+        }
+        #chatbot-panel.open { display: flex; animation: slideUp 0.3s ease; }
+        @keyframes slideUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+        #chat-messages { flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:8px; }
+        .msg-bot { background: rgba(124,58,237,0.15); border-radius:12px 12px 12px 0; padding:10px 14px; align-self:flex-start; max-width:85%; }
+        .msg-user { background: linear-gradient(135deg,#7C3AED,#4F46E5); border-radius:12px 12px 0 12px; padding:10px 14px; align-self:flex-end; max-width:85%; }
+
+        .ai-badge { background: linear-gradient(135deg,#7C3AED22,#06B6D422); border:1px solid #7C3AED44; color:#7C3AED; font-size:11px; padding:2px 8px; border-radius:20px; }
+        
+        .star-filled { color: #FBBF24; }
+        .progress-bar { height:6px; border-radius:3px; background:#1E1E38; }
+        .progress-fill { height:100%; border-radius:3px; background:linear-gradient(90deg,#7C3AED,#06B6D4); }
+        
+        ::-webkit-scrollbar { width:4px; }
+        ::-webkit-scrollbar-track { background: var(--brand-card); }
+        ::-webkit-scrollbar-thumb { background: #7C3AED55; border-radius:4px; }
+
+        .toast {
+            position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(100px);
+            background:linear-gradient(135deg,#7C3AED,#06B6D4);
+            color:white; padding:12px 24px; border-radius:30px;
+            transition:transform 0.3s; z-index:9999; font-weight:500;
+        }
+        .toast.show { transform:translateX(-50%) translateY(0); }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+<!-- BACKGROUND DYNAMIC ANIMATION LAYERS -->
+<div id="bg-blobs-container" class="fixed inset-0 pointer-events-none z-[-1] overflow-hidden">
+    <div class="bg-blob w-[500px] h-[500px] bg-violet-600/10 top-[-100px] left-[-100px]"></div>
+    <div class="bg-blob w-[600px] h-[600px] bg-cyan-500/10 bottom-[-100px] right-[-100px]" style="animation-delay: -2s; animation-duration: 15s;"></div>
+    <div class="bg-blob w-[400px] h-[400px] bg-pink-500/5 top-1/2 left-1/3" style="animation-delay: -4s; animation-duration: 12s;"></div>
+</div>
+
+<div id="bg-canvas-container" class="fixed inset-0 pointer-events-none z-[-1] overflow-hidden hidden">
+    <canvas id="fluid-canvas" class="w-full h-full"></canvas>
+</div>
+
+<!-- NAV -->
+<nav class="glass sticky top-0 z-50 px-6 py-4">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+        <a href="/" class="flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" class="glowing-logo w-12 h-12 text-white transition-all duration-300">
+                <!-- Handles -->
+                <path d="M 43 38 C 30 18, 48 10, 54 36" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                <path d="M 50 37 C 37 17, 55 9, 61 34" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                <!-- Side Fold -->
+                <path d="M 60 34 L 70 61 L 57 67 Z" fill="currentColor" opacity="0.7"/>
+                <!-- Front Face -->
+                <path d="M 40 39 L 60 34 L 57 67 L 33 60 Z" fill="currentColor"/>
+                <!-- Stripes -->
+                <path d="M 42 51 L 51 49" stroke="#F5CB93" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                <path d="M 41 54 L 50 52" stroke="#E68A57" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                <path d="M 40 57 L 49 55" stroke="#C95641" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+            </svg>
+        </a>
+
+        <div class="hidden md:flex items-center gap-6">
+            <a href="/products/" class="nav-link text-slate-300 text-sm">Products</a>
+            <a href="/products/?category=electronics" class="nav-link text-slate-300 text-sm">Electronics</a>
+            <a href="/ai/dashboard/" class="nav-link text-slate-300 text-sm flex items-center gap-1">
+                <i class="fas fa-robot text-violet-400 text-xs"></i> AI Features
+            </a>
+        </div>
+
+        <div class="flex items-center gap-5">
+            <!-- Search -->
+            <form method="GET" action="/products/" class="hidden md:flex items-center">
+                <div class="relative">
+                    <input type="text" name="q" placeholder="Search products..." class="bg-white/5 border border-white/10 rounded-full pl-4 pr-8 py-1.5 text-xs text-slate-300 w-40 focus:w-56 focus:outline-none focus:border-violet-500 transition-all duration-300">
+                    <button type="submit" class="absolute right-3 top-2.5 text-slate-400 text-xs"><i class="fas fa-search"></i></button>
+                </div>
+            </form>
+
+            <!-- Settings Toggle -->
+            <button onclick="toggleSettingsPanel()" class="text-slate-300 hover:text-violet-400 transition-colors p-2 rounded-full hover:bg-white/5 flex items-center justify-center" title="Site Preferences">
+                <i class="fas fa-sliders-h text-lg"></i>
+            </button>
+
+            <!-- Cart -->
+            <a href="/cart/" class="relative text-slate-300 hover:text-violet-400 transition-colors" title="Shopping Cart">
+                <i class="fas fa-shopping-cart text-lg"></i>
+            </a>
+
+            {% if user.is_authenticated %}
+            <!-- User Dropdown Menu -->
+            <div class="relative" id="user-menu-container">
+                <button onclick="toggleUserDropdown()" class="flex items-center focus:outline-none" id="user-menu-button">
+                    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-violet-600 to-cyan-500 flex items-center justify-center text-white text-xs font-bold border border-white/20 hover:border-violet-400 transition-colors">
+                        {{ user.username|first|upper }}
+                    </div>
+                </button>
+                <div id="user-dropdown" class="absolute right-0 mt-3 w-48 glass rounded-2xl p-2 border border-white/10 hidden shadow-2xl z-[1200] opacity-0 translate-y-2 transition-all duration-200">
+                    <div class="px-4 py-2 border-b border-white/5 mb-1.5">
+                        <div class="text-xs text-slate-500">Signed in as</div>
+                        <div class="text-sm font-semibold text-slate-200 truncate">{{ user.username }}</div>
+                    </div>
+                    <a href="/dashboard/" class="flex items-center gap-2 px-4 py-2 text-sm text-slate-300 hover:bg-white/5 rounded-xl transition-colors">
+                        <i class="fas fa-columns text-slate-500 text-xs w-4"></i> Dashboard
+                    </a>
+                    <a href="/seller/" class="flex items-center gap-2 px-4 py-2 text-sm text-slate-300 hover:bg-white/5 rounded-xl transition-colors">
+                        <i class="fas fa-store text-slate-500 text-xs w-4"></i> Seller Portal
+                    </a>
+                    <a href="/wishlist/" class="flex items-center gap-2 px-4 py-2 text-sm text-slate-300 hover:bg-white/5 rounded-xl transition-colors">
+                        <i class="fas fa-heart text-slate-500 text-xs w-4"></i> Wishlist
+                    </a>
+                    <div class="border-t border-white/5 my-1.5"></div>
+                    <a href="/accounts/logout/" class="flex items-center gap-2 px-4 py-2 text-sm text-red-400 hover:bg-red-500/10 rounded-xl transition-colors">
+                        <i class="fas fa-sign-out-alt text-xs w-4"></i> Logout
+                    </a>
+                </div>
+            </div>
+            {% else %}
+            <a href="/accounts/login/" class="text-slate-300 hover:text-white text-sm transition-colors">Login</a>
+            <a href="/accounts/register/" class="btn-primary px-5 py-2.5 rounded-full text-sm text-white font-medium">Get Started</a>
+            {% endif %}
+        </div>
+    </div>
+</nav>
+
+<!-- MESSAGES -->
+{% if messages %}
+<div class="max-w-7xl mx-auto px-6 pt-4">
+    {% for msg in messages %}
+    <div class="glass rounded-xl p-3 mb-2 text-sm {% if msg.tags == 'error' %}border-red-500/30 text-red-400{% else %}border-violet-500/30 text-violet-300{% endif %}">
+        {{ msg }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- CONTENT -->
+<main>{% block content %}{% endblock %}</main>
+
+<!-- FOOTER -->
+<footer class="mt-20 border-t border-white/5 py-12 px-6">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div>
+            <div class="mb-3">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" class="glowing-logo w-10 h-10 text-white transition-all duration-300">
+                    <!-- Handles -->
+                    <path d="M 43 38 C 30 18, 48 10, 54 36" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                    <path d="M 50 37 C 37 17, 55 9, 61 34" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                    <!-- Side Fold -->
+                    <path d="M 60 34 L 70 61 L 57 67 Z" fill="currentColor" opacity="0.7"/>
+                    <!-- Front Face -->
+                    <path d="M 40 39 L 60 34 L 57 67 L 33 60 Z" fill="currentColor"/>
+                    <!-- Stripes -->
+                    <path d="M 42 51 L 51 49" stroke="#F5CB93" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                    <path d="M 41 54 L 50 52" stroke="#E68A57" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                    <path d="M 40 57 L 49 55" stroke="#C95641" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                </svg>
+            </div>
+            <p class="text-slate-500 text-sm leading-relaxed">AI-Powered E-Commerce Platform with real-time price comparison across Amazon & Flipkart. Shop smarter, save more.</p>
+        </div>
+        <div>
+            <div class="font-semibold text-slate-300 mb-3">Quick Links</div>
+            <div class="flex flex-col gap-2 text-sm text-slate-500">
+                <a href="/products/" class="hover:text-violet-400">Products</a>
+                <a href="/ai/dashboard/" class="hover:text-violet-400">AI Features</a>
+                <a href="/seller/" class="hover:text-violet-400">Seller Portal</a>
+                <a href="/cart/" class="hover:text-violet-400">Cart</a>
+            </div>
+        </div>
+        <div>
+            <div class="font-semibold text-slate-300 mb-3">AI Features</div>
+            <div class="flex flex-col gap-2 text-sm text-slate-500">
+                <span>🤖 AI Chatbot</span>
+                <span>📊 Price Prediction</span>
+                <span>🎯 Smart Recommendations</span>
+                <span>💬 Sentiment Analysis</span>
+            </div>
+        </div>
+        <div>
+            <div class="font-semibold text-slate-300 mb-3">Price Comparison</div>
+            <div class="flex flex-col gap-2 text-sm text-slate-500">
+                <span>🛒 Amazon India</span>
+                <span>🔵 Flipkart</span>
+                <span>⚡ Real-time data</span>
+                <span>💰 Best deals</span>
+            </div>
+        </div>
+    </div>
+    <div class="max-w-7xl mx-auto mt-8 pt-6 border-t border-white/5 text-center text-slate-600 text-xs">
+        © 2026 NexCart AI — Intelligent Shopping, Smarter Decisions • Developed by Satya &amp; Tannu
+    </div>
+</footer>
+
+<!-- AI CHATBOT -->
+<div id="chatbot-btn" onclick="toggleChat()" class="fixed bottom-5 right-5 w-14 h-14 btn-primary rounded-full flex items-center justify-center cursor-pointer z-50 shadow-2xl" title="AI Shopping Assistant">
+    <i class="fas fa-robot text-white text-xl" id="chat-icon"></i>
+</div>
+
+<div id="chatbot-panel">
+    <div class="flex items-center justify-between p-4 border-b border-white/10">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-violet-600 to-cyan-500 flex items-center justify-center">
+                <i class="fas fa-robot text-white text-xs"></i>
+            </div>
+            <div>
+                <div class="font-semibold text-sm">ShopBot AI</div>
+                <div class="text-xs text-green-400 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-green-400 inline-block"></span>Online</div>
+            </div>
+        </div>
+        <button onclick="toggleChat()" class="text-slate-500 hover:text-white"><i class="fas fa-times"></i></button>
+    </div>
+    <div id="chat-messages">
+        <div class="msg-bot text-sm">👋 Hi! I'm ShopBot, your AI shopping assistant. Ask me anything — find products, compare prices, or get recommendations!</div>
+    </div>
+    <div class="p-3 border-t border-white/10 flex gap-2">
+        <input id="chat-input" type="text" placeholder="Ask me anything..." class="flex-1 bg-white/5 border border-white/10 rounded-full px-4 py-2 text-sm text-white focus:outline-none focus:border-violet-500" onkeypress="if(event.key==='Enter')sendChat()">
+        <button onclick="sendChat()" class="btn-primary w-9 h-9 rounded-full flex items-center justify-center">
+            <i class="fas fa-paper-plane text-white text-xs"></i>
+        </button>
+    </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<!-- SETTINGS DRAWER -->
+<div id="settings-drawer" class="fixed top-0 right-0 h-full w-80 glass z-[1100] translate-x-full transition-transform duration-300 ease-in-out flex flex-col p-6 shadow-2xl">
+    <div class="flex items-center justify-between border-b border-white/10 pb-4 mb-6">
+        <h3 class="font-display font-bold text-lg flex items-center gap-2">
+            <i class="fas fa-sliders-h text-violet-400"></i> Settings
+        </h3>
+        <button onclick="toggleSettingsPanel()" class="text-slate-400 hover:text-white transition-colors">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    
+    <div class="flex-1 flex flex-col gap-6">
+        <!-- Theme Mode Toggle -->
+        <div>
+            <label class="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-2">Color Theme</label>
+            <div class="grid grid-cols-2 gap-2">
+                <button onclick="setTheme('dark')" id="theme-btn-dark" class="flex items-center justify-center gap-2 py-2 px-3 rounded-xl border text-sm transition-all border-white/5 text-slate-400 hover:border-white/20">
+                    <i class="fas fa-moon"></i> Dark
+                </button>
+                <button onclick="setTheme('light')" id="theme-btn-light" class="flex items-center justify-center gap-2 py-2 px-3 rounded-xl border text-sm transition-all border-white/5 text-slate-400 hover:border-white/20">
+                    <i class="fas fa-sun"></i> Light
+                </button>
+            </div>
+        </div>
+        
+        <!-- Fluid Graphics Toggle -->
+        <div>
+            <label class="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-2">Fluid Backgrounds</label>
+            <div class="flex flex-col gap-2">
+                <button onclick="setFluidOption('off')" id="fluid-btn-off" class="flex items-center justify-between py-2.5 px-4 rounded-xl border text-sm text-left transition-all border-white/5 text-slate-400 hover:border-white/10">
+                    <span>🚫 Off</span>
+                    <i class="fas fa-check opacity-0 text-violet-400 text-xs"></i>
+                </button>
+                <button onclick="setFluidOption('blobs')" id="fluid-btn-blobs" class="flex items-center justify-between py-2.5 px-4 rounded-xl border text-sm text-left transition-all border-white/5 text-slate-400 hover:border-white/10">
+                    <span>🌌 Animated Blobs</span>
+                    <i class="fas fa-check opacity-0 text-violet-400 text-xs"></i>
+                </button>
+                <button onclick="setFluidOption('canvas')" id="fluid-btn-canvas" class="flex items-center justify-between py-2.5 px-4 rounded-xl border text-sm text-left transition-all border-white/5 text-slate-400 hover:border-white/10">
+                    <span>🧬 Fluid Particles</span>
+                    <i class="fas fa-check opacity-0 text-violet-400 text-xs"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="border-t border-white/10 pt-4 text-center text-xs text-slate-500">
+        NexCart AI • Industry Ready
+    </div>
+</div>
+<!-- BACKDROP FOR DRAWER -->
+<div id="settings-backdrop" onclick="toggleSettingsPanel()" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[1050] hidden opacity-0 transition-opacity duration-300"></div>
+
+<script>
+let settingsOpen = false;
+let canvas, ctx, particles = [], animationId;
+let mouse = { x: null, y: null, radius: 120 };
+
+function toggleSettingsPanel() {
+    settingsOpen = !settingsOpen;
+    const drawer = document.getElementById('settings-drawer');
+    const backdrop = document.getElementById('settings-backdrop');
+    if (settingsOpen) {
+        drawer.classList.remove('translate-x-full');
+        backdrop.classList.remove('hidden');
+        setTimeout(() => backdrop.classList.add('opacity-100'), 10);
+    } else {
+        drawer.classList.add('translate-x-full');
+        backdrop.classList.remove('opacity-100');
+        setTimeout(() => {
+            backdrop.classList.add('hidden');
+        }, 300);
+    }
+}
+
+function setTheme(theme) {
+    if (theme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        localStorage.setItem('nexcart-theme', 'light');
+        document.getElementById('theme-btn-light').className = "flex items-center justify-center gap-2 py-2 px-3 rounded-xl border text-sm transition-all bg-violet-600/20 border-violet-500 text-violet-300";
+        document.getElementById('theme-btn-dark').className = "flex items-center justify-center gap-2 py-2 px-3 rounded-xl border text-sm transition-all border-white/5 text-slate-400 hover:border-white/20";
+    } else {
+        document.documentElement.classList.remove('light-theme');
+        localStorage.setItem('nexcart-theme', 'dark');
+        document.getElementById('theme-btn-dark').className = "flex items-center justify-center gap-2 py-2 px-3 rounded-xl border text-sm transition-all bg-violet-600/20 border-violet-500 text-violet-300";
+        document.getElementById('theme-btn-light').className = "flex items-center justify-center gap-2 py-2 px-3 rounded-xl border text-sm transition-all border-white/5 text-slate-400 hover:border-white/20";
+    }
+    if (window.updateCanvasColors) window.updateCanvasColors();
+}
+
+function setFluidOption(option) {
+    localStorage.setItem('nexcart-fluid', option);
+    
+    // Update button visual states
+    const options = ['off', 'blobs', 'canvas'];
+    options.forEach(opt => {
+        const btn = document.getElementById(`fluid-btn-${opt}`);
+        const check = btn.querySelector('.fa-check');
+        if (opt === option) {
+            btn.className = "flex items-center justify-between py-2.5 px-4 rounded-xl border text-sm text-left transition-all bg-violet-600/20 border-violet-500 text-violet-300";
+            check.classList.remove('opacity-0');
+        } else {
+            btn.className = "flex items-center justify-between py-2.5 px-4 rounded-xl border text-sm text-left transition-all border-white/5 text-slate-400 hover:border-white/10";
+            check.classList.add('opacity-0');
+        }
+    });
+
+    applyFluidBackground(option);
+}
+
+function applyFluidBackground(option) {
+    const blobs = document.getElementById('bg-blobs-container');
+    const canvasContainer = document.getElementById('bg-canvas-container');
+    
+    if (animationId) {
+        cancelAnimationFrame(animationId);
+        animationId = null;
+    }
+    
+    if (option === 'off') {
+        if (blobs) blobs.classList.add('hidden');
+        if (canvasContainer) canvasContainer.classList.add('hidden');
+    } else if (option === 'blobs') {
+        if (blobs) blobs.classList.remove('hidden');
+        if (canvasContainer) canvasContainer.classList.add('hidden');
+    } else if (option === 'canvas') {
+        if (blobs) blobs.classList.add('hidden');
+        if (canvasContainer) canvasContainer.classList.remove('hidden');
+        startCanvasAnimation();
+    }
+}
+
+function startCanvasAnimation() {
+    canvas = document.getElementById('fluid-canvas');
+    if (!canvas) return;
+    ctx = canvas.getContext('2d');
+    
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    window.removeEventListener('resize', resizeCanvas);
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    
+    particles = [];
+    const numberOfParticles = Math.min(60, Math.floor((canvas.width * canvas.height) / 30000));
+    
+    let isLight = document.documentElement.classList.contains('light-theme');
+    
+    window.updateCanvasColors = function() {
+        isLight = document.documentElement.classList.contains('light-theme');
+        particles.forEach(p => {
+            p.color = isLight ? 'rgba(109, 40, 217, 0.25)' : 'rgba(124, 58, 237, 0.2)';
+        });
+    }
+
+    class Particle {
+        constructor(x, y) {
+            this.x = x;
+            this.y = y;
+            this.size = Math.random() * 2 + 1;
+            this.dx = (Math.random() - 0.5) * 0.4;
+            this.dy = (Math.random() - 0.5) * 0.4;
+            this.color = isLight ? 'rgba(109, 40, 217, 0.25)' : 'rgba(124, 58, 237, 0.2)';
+        }
+        draw() {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fillStyle = this.color;
+            ctx.fill();
+        }
+        update() {
+            this.x += this.dx;
+            this.y += this.dy;
+            if (this.x < 0 || this.x > canvas.width) this.dx = -this.dx;
+            if (this.y < 0 || this.y > canvas.height) this.dy = -this.dy;
+            
+            // Mouse interaction
+            if (mouse.x !== null && mouse.y !== null) {
+                let dx = mouse.x - this.x;
+                let dy = mouse.y - this.y;
+                let distance = Math.sqrt(dx * dx + dy * dy);
+                if (distance < 120) {
+                    let force = (120 - distance) / 120;
+                    this.x -= (dx / distance) * force * 1.2;
+                    this.y -= (dy / distance) * force * 1.2;
+                }
+            }
+            this.draw();
+        }
+    }
+    
+    for (let i = 0; i < numberOfParticles; i++) {
+        particles.push(new Particle(Math.random() * canvas.width, Math.random() * canvas.height));
+    }
+    
+    window.removeEventListener('mousemove', onMouseMove);
+    window.addEventListener('mousemove', onMouseMove);
+    
+    window.removeEventListener('mouseleave', onMouseLeave);
+    window.addEventListener('mouseleave', onMouseLeave);
+    
+    function animate() {
+        if (!canvasContainer || canvasContainer.classList.contains('hidden')) return;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(p => p.update());
+        connectParticles();
+        animationId = requestAnimationFrame(animate);
+    }
+    animate();
+}
+
+function onMouseMove(e) {
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+}
+
+function onMouseLeave() {
+    mouse.x = null;
+    mouse.y = null;
+}
+
+function connectParticles() {
+    let opacityValue = 1;
+    const maxDistance = 120;
+    const isLight = document.documentElement.classList.contains('light-theme');
+    for (let a = 0; a < particles.length; a++) {
+        for (let b = a; b < particles.length; b++) {
+            let dx = particles[a].x - particles[b].x;
+            let dy = particles[a].y - particles[b].y;
+            let distance = Math.sqrt(dx * dx + dy * dy);
+            if (distance < maxDistance) {
+                opacityValue = 1 - (distance / maxDistance);
+                ctx.strokeStyle = isLight 
+                    ? `rgba(109, 40, 217, ${opacityValue * 0.12})` 
+                    : `rgba(124, 58, 237, ${opacityValue * 0.12})`;
+                ctx.lineWidth = 0.5;
+                ctx.beginPath();
+                ctx.moveTo(particles[a].x, particles[a].y);
+                ctx.lineTo(particles[b].x, particles[b].y);
+                ctx.stroke();
+            }
+        }
+    }
+}
+
+// Page load initialization
+document.addEventListener('DOMContentLoaded', () => {
+    const savedTheme = localStorage.getItem('nexcart-theme') || 'dark';
+    setTheme(savedTheme);
+    
+    const savedFluid = localStorage.getItem('nexcart-fluid') || 'blobs';
+    setFluidOption(savedFluid);
+});
+
+let chatHistory = [];
+let chatOpen = false;
+
+function toggleChat() {
+    chatOpen = !chatOpen;
+    const panel = document.getElementById('chatbot-panel');
+    const icon = document.getElementById('chat-icon');
+    panel.classList.toggle('open', chatOpen);
+    icon.className = chatOpen ? 'fas fa-times text-white text-xl' : 'fas fa-robot text-white text-xl';
+}
+
+async function sendChat() {
+    const input = document.getElementById('chat-input');
+    const msg = input.value.trim();
+    if (!msg) return;
+    input.value = '';
+
+    const msgs = document.getElementById('chat-messages');
+    msgs.innerHTML += `<div class="msg-user text-sm">${msg}</div>`;
+    msgs.innerHTML += `<div class="msg-bot text-sm" id="typing">⏳ Thinking...</div>`;
+    msgs.scrollTop = msgs.scrollHeight;
+
+    const historyToSend = chatHistory.slice(-6);
+
+    chatHistory.push({role: 'user', content: msg});
+
+    try {
+        const res = await fetch('/ai/chatbot/', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json', 'X-CSRFToken': getCsrf()},
+            body: JSON.stringify({message: msg, history: historyToSend})
+        });
+        const data = await res.json();
+        document.getElementById('typing').outerHTML = `<div class="msg-bot text-sm">${data.reply}</div>`;
+        chatHistory.push({role: 'assistant', content: data.reply});
+    } catch(e) {
+        document.getElementById('typing').outerHTML = `<div class="msg-bot text-sm text-red-400">Connection error. Try again.</div>`;
+    }
+    msgs.scrollTop = msgs.scrollHeight;
+}
+
+function getCsrf() {
+    return document.cookie.split(';').find(c => c.includes('csrftoken'))?.split('=')[1] || '';
+}
+
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+async function toggleWishlist(pid) {
+    const res = await fetch(`/wishlist/toggle/${pid}/`, {
+        method: 'POST',
+        headers: {'X-CSRFToken': getCsrf(), 'X-Requested-With': 'XMLHttpRequest'}
+    });
+    const data = await res.json();
+    showToast(data.added ? '❤️ Added to wishlist!' : '💔 Removed from wishlist');
+    const btn = document.getElementById(`wish-${pid}`);
+    if (btn) btn.classList.toggle('text-pink-400', data.added);
+}
+
+async function addToCart(pid) {
+    const res = await fetch(`/cart/add/${pid}/`, {
+        method: 'POST',
+        headers: {'X-CSRFToken': getCsrf(), 'X-Requested-With': 'XMLHttpRequest'}
+    });
+    const data = await res.json();
+    if (data.success) showToast('🛒 Added to cart!');
+}
+
+function toggleUserDropdown() {
+    const dropdown = document.getElementById('user-dropdown');
+    if (!dropdown) return;
+    const isHidden = dropdown.classList.contains('hidden');
+    if (isHidden) {
+        dropdown.classList.remove('hidden');
+        setTimeout(() => {
+            dropdown.classList.remove('opacity-0', 'translate-y-2');
+            dropdown.classList.add('opacity-100', 'translate-y-0');
+        }, 10);
+    } else {
+        dismissUserDropdown();
+    }
+}
+
+function dismissUserDropdown() {
+    const dropdown = document.getElementById('user-dropdown');
+    if (!dropdown) return;
+    dropdown.classList.remove('opacity-100', 'translate-y-0');
+    dropdown.classList.add('opacity-0', 'translate-y-2');
+    setTimeout(() => {
+        dropdown.classList.add('hidden');
+    }, 200);
+}
+
+// Close user dropdown when clicking outside
+document.addEventListener('click', (e) => {
+    const container = document.getElementById('user-menu-container');
+    const dropdown = document.getElementById('user-dropdown');
+    if (container && !container.contains(e.target) && dropdown && !dropdown.classList.contains('hidden')) {
+        dismissUserDropdown();
+    }
+});
+</script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

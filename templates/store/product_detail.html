@@ -1,0 +1,270 @@
+{% extends 'base.html' %}
+{% block title %}{{ product.name }} — NexCart AI{% endblock %}
+{% block content %}
+<div class="max-w-7xl mx-auto px-6 py-10">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-12">
+        <!-- IMAGE -->
+        <div>
+            <div class="glass rounded-3xl overflow-hidden">
+                <img src="{{ product.image_url }}" alt="{{ product.name }}" class="w-full h-96 object-cover" onerror="this.src='https://placehold.co/600x400/161628/7C3AED?text={{ product.name|urlencode }}'">
+            </div>
+        </div>
+
+        <!-- DETAILS -->
+        <div>
+            <div class="flex items-center gap-2 mb-3">
+                <span class="ai-badge">{{ product.category.name }}</span>
+                {% if product.is_ai_recommended %}<span class="ai-badge">🤖 AI Recommended</span>{% endif %}
+                {% if product.brand %}<span class="text-xs text-slate-500">{{ product.brand }}</span>{% endif %}
+            </div>
+            <h1 class="font-display font-bold text-3xl text-white mb-3">{{ product.name }}</h1>
+            <div class="flex items-center gap-3 mb-4">
+                <div class="flex items-center gap-1">
+                    {% for i in "12345" %}
+                    <i class="fas fa-star {% if forloop.counter <= product.rating|floatformat:'0'|add:'0' %}star-filled{% else %}text-slate-600{% endif %}"></i>
+                    {% endfor %}
+                </div>
+                <span class="text-slate-400 text-sm">{{ product.rating }} ({{ product.reviews_count }} reviews)</span>
+                <span class="text-green-400 text-sm">{% if product.stock > 0 %}✓ In Stock ({{ product.stock }}){% else %}✗ Out of Stock{% endif %}</span>
+            </div>
+
+            <!-- PRICE COMPARISON TABLE -->
+            <div class="glass rounded-2xl p-5 mb-6 border border-violet-500/20">
+                <div class="font-semibold text-sm mb-3 flex items-center gap-2">
+                    <i class="fas fa-chart-bar text-violet-400"></i> Price Comparison
+                </div>
+                <div class="space-y-3">
+                    {% if product.amazon_price %}
+                    <div class="flex items-center justify-between py-2 border-b border-white/5">
+                        <div class="flex items-center gap-3">
+                            <span class="text-2xl">🛒</span>
+                            <div>
+                                <div class="font-semibold text-sm text-orange-400">Amazon India</div>
+                                <div class="text-xs text-slate-500">india.amazon.com</div>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="font-bold text-white">₹{{ product.amazon_price }}</div>
+                            {% if product.amazon_url %}
+                            <a href="{{ product.amazon_url }}" target="_blank" class="text-xs text-orange-400 hover:text-orange-300">Visit →</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if product.flipkart_price %}
+                    <div class="flex items-center justify-between py-2 border-b border-white/5">
+                        <div class="flex items-center gap-3">
+                            <span class="text-2xl">🔵</span>
+                            <div>
+                                <div class="font-semibold text-sm text-blue-400">Flipkart</div>
+                                <div class="text-xs text-slate-500">flipkart.com</div>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="font-bold text-white">₹{{ product.flipkart_price }}</div>
+                            {% if product.flipkart_url %}
+                            <a href="{{ product.flipkart_url }}" target="_blank" class="text-xs text-blue-400 hover:text-blue-300">Visit →</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+                    <div class="flex items-center justify-between py-2">
+                        <div class="flex items-center gap-3">
+                            <span class="text-2xl">⚡</span>
+                            <div>
+                                <div class="font-semibold text-sm text-green-400">NexCart AI</div>
+                                <div class="text-xs text-slate-500">Best Price!</div>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="font-display font-bold text-2xl gradient-text">₹{{ product.our_price }}</div>
+                            {% if product.discount_percent > 0 %}
+                            <div class="text-xs text-green-400">{{ product.discount_percent }}% cheaper than Amazon!</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Price Prediction -->
+                <button onclick="predictPrice({{ product.id }})" class="w-full mt-4 glass py-2 rounded-xl text-xs text-violet-300 hover:border-violet-500/40 transition-colors">
+                    <i class="fas fa-robot mr-1"></i> AI Price Prediction — Should I buy now?
+                </button>
+                <div id="price-prediction" class="mt-3 hidden"></div>
+            </div>
+
+            <!-- ECO CREDIT RATING CARD -->
+            <div class="glass rounded-2xl p-5 mb-6 border border-emerald-500/20 hover:border-emerald-500/30 transition-colors">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="font-semibold text-sm flex items-center gap-2 text-slate-200">
+                        <i class="fas fa-leaf text-emerald-400"></i> Eco Credit Rating
+                    </div>
+                    <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 uppercase tracking-wide">
+                        {% if product.eco_rating >= 90 %}Excellent{% elif product.eco_rating >= 80 %}Good{% elif product.eco_rating >= 60 %}Moderate{% else %}Low{% endif %}
+                    </span>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="w-14 h-14 rounded-full bg-white/5 flex flex-col items-center justify-center border border-emerald-500/20">
+                        <span class="text-xl font-bold text-emerald-400 leading-none">{{ product.eco_rating }}</span>
+                        <span class="text-[8px] text-slate-500 mt-0.5">/100</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="h-2 rounded-full bg-white/5 overflow-hidden mb-2">
+                            <div class="h-full rounded-full bg-gradient-to-r from-emerald-500 to-teal-400" style="width: {{ product.eco_rating }}%"></div>
+                        </div>
+                        <p class="text-xs text-slate-400 leading-normal">
+                            This product has an eco sustainability score of <strong class="text-emerald-400">{{ product.eco_rating }}</strong> based on green manufacturing, supply chains, and circular recyclability.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <p class="text-slate-400 text-sm leading-relaxed mb-6">{{ product.description }}</p>
+            {% if product.ai_summary %}
+            <div class="glass rounded-2xl p-4 mb-6 border-l-2 border-violet-500">
+                <div class="text-xs text-violet-400 mb-1"><i class="fas fa-robot mr-1"></i> AI Summary</div>
+                <p class="text-slate-300 text-sm">{{ product.ai_summary }}</p>
+            </div>
+            {% endif %}
+
+            <div class="flex gap-3">
+                <button onclick="{% if user.is_authenticated %}addToCart({{ product.id }}){% else %}window.location='/accounts/login/'{% endif %}" class="flex-1 btn-primary py-3 rounded-2xl text-white font-semibold">
+                    <i class="fas fa-shopping-cart mr-2"></i> Add to Cart
+                </button>
+                <button onclick="{% if user.is_authenticated %}toggleWishlist({{ product.id }}){% else %}window.location='/accounts/login/'{% endif %}" id="wish-{{ product.id }}" class="w-12 glass rounded-2xl flex items-center justify-center {% if in_wishlist %}text-pink-400{% else %}text-slate-400{% endif %} hover:text-pink-400 transition-colors">
+                    <i class="fas fa-heart"></i>
+                </button>
+                <a href="/product/{{ product.id }}/compare/" class="flex-1 glass py-3 rounded-2xl text-center text-slate-300 hover:border-violet-500/40 transition-colors font-semibold">
+                    <i class="fas fa-balance-scale mr-2"></i> Compare
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- REVIEWS SECTION -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+        <div>
+            <h2 class="font-display font-bold text-xl mb-5">Customer Reviews</h2>
+            {% if reviews %}
+                <!-- AI SENTIMENT -->
+                <button onclick="analyzeReviews()" class="glass px-4 py-2 rounded-xl text-xs text-violet-300 mb-4 hover:border-violet-500/40 transition-colors">
+                    <i class="fas fa-robot mr-1"></i> AI Sentiment Analysis
+                </button>
+                <div id="sentiment-result" class="mb-4 hidden"></div>
+
+                {% for review in reviews %}
+                <div class="glass rounded-2xl p-4 mb-3">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center gap-2">
+                            <div class="w-7 h-7 rounded-full bg-gradient-to-br from-violet-600 to-cyan-500 flex items-center justify-center text-white text-xs font-bold">{{ review.user.username|first|upper }}</div>
+                            <span class="text-sm font-semibold">{{ review.user.username }}</span>
+                        </div>
+                        <div class="flex items-center gap-1">
+                            {% for i in "12345" %}
+                            <i class="fas fa-star text-xs {% if forloop.counter <= review.rating %}star-filled{% else %}text-slate-700{% endif %}"></i>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <p class="text-slate-400 text-sm">{{ review.comment }}</p>
+                    <div class="text-xs text-slate-600 mt-2">{{ review.created_at|date:"d M Y" }}</div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="glass rounded-2xl p-6 text-center text-slate-500">
+                    <div class="text-3xl mb-2">💬</div>
+                    <p>No reviews yet. Be the first to review!</p>
+                </div>
+            {% endif %}
+
+            <!-- ADD REVIEW -->
+            {% if user.is_authenticated %}
+            <form method="POST" action="/review/add/{{ product.id }}/" class="glass rounded-2xl p-5 mt-4">
+                {% csrf_token %}
+                <div class="font-semibold text-sm mb-3">Write a Review</div>
+                <div class="flex gap-1 mb-3" id="star-rating">
+                    {% for i in "12345" %}
+                    <button type="button" onclick="setRating({{ forloop.counter }})" class="star-btn text-2xl text-slate-600 hover:text-yellow-400 transition-colors" data-val="{{ forloop.counter }}">★</button>
+                    {% endfor %}
+                </div>
+                <input type="hidden" name="rating" id="rating-input" value="5">
+                <textarea name="comment" rows="3" placeholder="Share your experience..." class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-sm text-slate-300 focus:outline-none focus:border-violet-500 mb-3 resize-none"></textarea>
+                <button type="submit" class="btn-primary px-5 py-2 rounded-xl text-white text-sm font-medium">Submit Review</button>
+            </form>
+            {% endif %}
+        </div>
+
+        <!-- RELATED PRODUCTS -->
+        <div>
+            <h2 class="font-display font-bold text-xl mb-5">Related Products</h2>
+            <div class="space-y-3">
+                {% for p in related %}
+                <div class="glass rounded-2xl p-4 flex gap-4 hover:border-violet-500/30 transition-all hover:-translate-x-1">
+                    <img src="{{ p.image_url }}" alt="{{ p.name }}" class="w-16 h-16 rounded-xl object-cover" onerror="this.src='https://placehold.co/64/161628/7C3AED?text=P'">
+                    <div class="flex-1 min-w-0">
+                        <a href="/product/{{ p.id }}/"><div class="font-semibold text-sm hover:text-violet-300 transition-colors line-clamp-1">{{ p.name }}</div></a>
+                        <div class="text-green-400 font-bold text-sm mt-1">₹{{ p.our_price }}</div>
+                        {% if p.amazon_price and p.amazon_price != p.our_price %}
+                        <div class="text-slate-500 text-xs line-through">₹{{ p.amazon_price }} Amazon</div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function setRating(val) {
+    document.getElementById('rating-input').value = val;
+    document.querySelectorAll('.star-btn').forEach((btn, i) => {
+        btn.style.color = i < val ? '#FBBF24' : '#4B5563';
+    });
+}
+setRating(5);
+
+async function predictPrice(pid) {
+    const div = document.getElementById('price-prediction');
+    div.innerHTML = '<div class="text-xs text-slate-400 animate-pulse">🤖 AI analyzing price trends...</div>';
+    div.classList.remove('hidden');
+    const res = await fetch('/ai/price-predict/', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'X-CSRFToken': getCsrf()},
+        body: JSON.stringify({product_id: pid})
+    });
+    const d = await res.json();
+    const trendColor = d.trend === 'falling' ? 'text-green-400' : d.trend === 'rising' ? 'text-red-400' : 'text-yellow-400';
+    div.innerHTML = `<div class="glass rounded-xl p-3 text-xs space-y-1">
+        <div class="flex justify-between"><span class="text-slate-400">Trend</span><span class="${trendColor} font-semibold">${d.trend || 'stable'} ${d.trend === 'falling' ? '↓' : d.trend === 'rising' ? '↑' : '→'}</span></div>
+        ${d.predicted_price ? `<div class="flex justify-between"><span class="text-slate-400">Predicted Price</span><span class="text-white font-semibold">₹${d.predicted_price}</span></div>` : ''}
+        ${d.confidence ? `<div class="flex justify-between"><span class="text-slate-400">Confidence</span><span class="text-violet-400">${d.confidence}%</span></div>` : ''}
+        <div class="pt-1 border-t border-white/10 text-violet-300 font-medium">${d.advice || d.summary || 'Analysis complete'}</div>
+    </div>`;
+}
+
+async function analyzeReviews() {
+    const reviews = [...document.querySelectorAll('.glass p.text-slate-400')].map(el => el.textContent.trim()).filter(Boolean);
+    if (!reviews.length) return;
+    const div = document.getElementById('sentiment-result');
+    div.innerHTML = '<div class="text-xs text-slate-400 animate-pulse">🤖 Analyzing reviews...</div>';
+    div.classList.remove('hidden');
+    const res = await fetch('/ai/sentiment/', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'X-CSRFToken': getCsrf()},
+        body: JSON.stringify({reviews})
+    });
+    const d = await res.json();
+    const sentColor = d.overall_sentiment === 'positive' ? 'text-green-400' : d.overall_sentiment === 'negative' ? 'text-red-400' : 'text-yellow-400';
+    div.innerHTML = `<div class="glass rounded-xl p-4 text-xs border border-violet-500/20">
+        <div class="flex items-center gap-2 mb-2">
+            <span class="${sentColor} font-bold text-sm">${(d.overall_sentiment || 'mixed').toUpperCase()}</span>
+            ${d.score ? `<span class="text-slate-400">${d.score}/100</span>` : ''}
+        </div>
+        <p class="text-slate-300">${d.summary || 'Analysis complete'}</p>
+        ${d.positives ? `<div class="mt-2"><span class="text-green-400">✓ </span>${d.positives.join(', ')}</div>` : ''}
+        ${d.negatives ? `<div class="mt-1"><span class="text-red-400">✗ </span>${d.negatives.join(', ')}</div>` : ''}
+    </div>`;
+}
+</script>
+{% endblock %}

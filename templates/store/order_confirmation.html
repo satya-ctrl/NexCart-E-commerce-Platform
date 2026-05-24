@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Order Confirmed!{% endblock %}
+{% block content %}
+<div class="max-w-2xl mx-auto px-6 py-20 text-center">
+    <div class="text-7xl mb-6 animate-bounce">🎉</div>
+    <h1 class="font-display font-bold text-4xl gradient-text mb-3">Order Confirmed!</h1>
+    <p class="text-slate-400 mb-2">Order #{{ order.id }} has been placed successfully.</p>
+    <p class="text-slate-500 text-sm mb-8">You'll receive a confirmation shortly.</p>
+    <div class="glass rounded-2xl p-6 mb-8 text-left">
+        <div class="flex justify-between items-center mb-3">
+            <span class="text-slate-400">Order ID</span><span class="font-mono font-bold">#{{ order.id }}</span>
+        </div>
+        <div class="flex justify-between items-center mb-3">
+            <span class="text-slate-400">Total</span><span class="gradient-text font-bold text-xl">₹{{ order.total }}</span>
+        </div>
+        <div class="flex justify-between items-center">
+            <span class="text-slate-400">Status</span><span class="text-green-400 font-semibold">✓ Confirmed</span>
+        </div>
+    </div>
+    <div class="flex gap-4 justify-center">
+        <a href="/dashboard/" class="btn-primary px-6 py-3 rounded-full text-white font-semibold">View Orders</a>
+        <a href="/products/" class="glass px-6 py-3 rounded-full text-slate-300 font-semibold">Shop More</a>
+    </div>
+</div>
+{% endblock %}

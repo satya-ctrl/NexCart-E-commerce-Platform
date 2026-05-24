@@ -1,0 +1,250 @@
+{% extends 'base.html' %}
+{% block title %}AI Features — NexCart AI{% endblock %}
+{% block content %}
+<div class="max-w-5xl mx-auto px-6 py-10">
+    <div class="text-center mb-12">
+        <h1 class="font-display font-bold text-4xl gradient-text mb-3">AI Features Dashboard</h1>
+        <p class="text-slate-400 max-w-xl mx-auto">Harness the power of AI to shop smarter, discover better deals, and make confident purchases</p>
+    </div>
+
+    <!-- AI RECOMMENDATION ENGINE -->
+    <div id="recommend" class="glass rounded-3xl p-8 mb-6 border border-violet-500/20">
+        <div class="flex items-center gap-3 mb-6">
+            <div class="w-10 h-10 rounded-2xl bg-violet-600/20 flex items-center justify-center text-xl">🎯</div>
+            <div>
+                <h2 class="font-display font-bold text-xl">AI Product Recommendation</h2>
+                <p class="text-slate-500 text-sm">Tell us your needs, Claude AI finds your perfect product</p>
+            </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div>
+                <label class="text-xs text-slate-400 block mb-1 font-semibold uppercase tracking-wide">Budget (₹)</label>
+                <input id="rec-budget" type="number" placeholder="e.g. 15000" class="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-violet-500">
+            </div>
+            <div>
+                <label class="text-xs text-slate-400 block mb-1 font-semibold uppercase tracking-wide">Category</label>
+                <input id="rec-cat" type="text" placeholder="e.g. Electronics" class="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-violet-500">
+            </div>
+            <div>
+                <label class="text-xs text-slate-400 block mb-1 font-semibold uppercase tracking-wide">Preferences</label>
+                <input id="rec-pref" type="text" placeholder="e.g. long battery, lightweight" class="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-violet-500">
+            </div>
+        </div>
+        <button onclick="getRecommendations()" class="btn-primary px-6 py-2.5 rounded-xl text-white text-sm font-semibold">
+            <i class="fas fa-robot mr-2"></i> Get AI Recommendations
+        </button>
+        <div id="rec-results" class="mt-5 hidden"></div>
+    </div>
+
+    <!-- SENTIMENT ANALYSIS -->
+    <div id="sentiment" class="glass rounded-3xl p-8 mb-6 border border-cyan-500/20">
+        <div class="flex items-center gap-3 mb-6">
+            <div class="w-10 h-10 rounded-2xl bg-cyan-600/20 flex items-center justify-center text-xl">💬</div>
+            <div>
+                <h2 class="font-display font-bold text-xl">AI Review Sentiment Analysis</h2>
+                <p class="text-slate-500 text-sm">Paste product reviews and Claude AI will analyze the sentiment</p>
+            </div>
+        </div>
+        <textarea id="sentiment-input" rows="5" placeholder="Paste multiple reviews here (one per line)...&#10;e.g. Great product, very fast delivery!&#10;Battery life is terrible, disappointed.&#10;Good value for money, would recommend." class="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-sm text-slate-300 focus:outline-none focus:border-cyan-500 resize-none mb-4"></textarea>
+        <button onclick="runSentiment()" class="btn-cyan px-6 py-2.5 rounded-xl text-white text-sm font-semibold">
+            <i class="fas fa-brain mr-2"></i> Analyze Sentiment
+        </button>
+        <div id="sentiment-out" class="mt-5 hidden"></div>
+    </div>
+
+    <!-- PRICE PREDICTION -->
+    <div id="predict" class="glass rounded-3xl p-8 mb-6 border border-green-500/20">
+        <div class="flex items-center gap-3 mb-6">
+            <div class="w-10 h-10 rounded-2xl bg-green-600/20 flex items-center justify-center text-xl">📈</div>
+            <div>
+                <h2 class="font-display font-bold text-xl">AI Price Prediction</h2>
+                <p class="text-slate-500 text-sm">Enter product ID and Claude AI predicts future price trends</p>
+            </div>
+        </div>
+        <div class="flex gap-3">
+            <select id="pred-pid" class="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-green-500">
+                <option value="" disabled selected class="bg-black text-slate-400">Select a product for price prediction...</option>
+                {% for prod in products %}
+                <option value="{{ prod.id }}" class="bg-black text-slate-200">{{ prod.name }} (₹{{ prod.our_price }})</option>
+                {% endfor %}
+            </select>
+            <button onclick="runPricePred()" class="bg-green-600 hover:bg-green-500 transition-colors px-6 py-2.5 rounded-xl text-white text-sm font-semibold whitespace-nowrap">
+                <i class="fas fa-chart-line mr-2"></i> Predict Price
+            </button>
+        </div>
+        <div id="pred-out" class="mt-5 hidden"></div>
+    </div>
+
+    <!-- SMART SEARCH -->
+    <div class="glass rounded-3xl p-8 mb-6 border border-yellow-500/20">
+        <div class="flex items-center gap-3 mb-6">
+            <div class="w-10 h-10 rounded-2xl bg-yellow-600/20 flex items-center justify-center text-xl">🔍</div>
+            <div>
+                <h2 class="font-display font-bold text-xl">AI Smart Search</h2>
+                <p class="text-slate-500 text-sm">Natural language search — describe what you need, Claude finds it</p>
+            </div>
+        </div>
+        <div class="flex gap-3">
+            <input id="ss-input" type="text" placeholder='e.g. "best wireless earbuds under 2000 with noise cancellation"' class="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-yellow-500" onkeypress="if(event.key==='Enter')runSmartSearch()">
+            <button onclick="runSmartSearch()" class="bg-yellow-600 hover:bg-yellow-500 transition-colors px-6 py-2.5 rounded-xl text-white text-sm font-semibold">Search</button>
+        </div>
+        <div id="ss-out" class="mt-5 hidden"></div>
+    </div>
+
+    <!-- CHATBOT CARD -->
+    <div class="glass rounded-3xl p-8 border border-violet-500/20 text-center">
+        <div class="text-5xl mb-4">🤖</div>
+        <h2 class="font-display font-bold text-2xl mb-2">ShopBot AI Assistant</h2>
+        <p class="text-slate-400 mb-5">Chat with our AI assistant for product recommendations, price comparisons, and shopping help. Available 24/7.</p>
+        <button onclick="toggleChat()" class="btn-primary px-8 py-3 rounded-full text-white font-semibold text-lg">
+            <i class="fas fa-comments mr-2"></i> Open ShopBot AI
+        </button>
+    </div>
+
+    <!-- PLATFORM CAPABILITIES -->
+    <div class="glass rounded-3xl p-8 mt-6 border border-white/10">
+        <h2 class="font-display font-bold text-xl mb-2">⚡ Platform Capabilities</h2>
+        <p class="text-slate-500 text-sm mb-6">Everything NexCart AI can do for you</p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5 text-sm">
+            <div class="glass rounded-2xl p-5 border border-violet-500/15">
+                <div class="text-2xl mb-3">🤖</div>
+                <div class="font-semibold text-slate-200 mb-1">Conversational AI</div>
+                <div class="text-slate-500 text-xs leading-relaxed">24/7 shopping assistant powered by Claude. Ask anything about products, pricing, or comparisons in natural language.</div>
+            </div>
+            <div class="glass rounded-2xl p-5 border border-violet-500/15">
+                <div class="text-2xl mb-3">🎯</div>
+                <div class="font-semibold text-slate-200 mb-1">Smart Recommendations</div>
+                <div class="text-slate-500 text-xs leading-relaxed">AI matches products to your budget, preferences and needs. No more endless scrolling — get what fits you instantly.</div>
+            </div>
+            <div class="glass rounded-2xl p-5 border border-violet-500/15">
+                <div class="text-2xl mb-3">💬</div>
+                <div class="font-semibold text-slate-200 mb-1">Sentiment Analysis</div>
+                <div class="text-slate-500 text-xs leading-relaxed">AI distills hundreds of customer reviews into a clear verdict. Know if a product is worth buying before you commit.</div>
+            </div>
+            <div class="glass rounded-2xl p-5 border border-cyan-500/15">
+                <div class="text-2xl mb-3">📈</div>
+                <div class="font-semibold text-slate-200 mb-1">Price Prediction</div>
+                <div class="text-slate-500 text-xs leading-relaxed">AI forecasts price trends so you know when to buy. Never purchase at the peak price again.</div>
+            </div>
+            <div class="glass rounded-2xl p-5 border border-cyan-500/15">
+                <div class="text-2xl mb-3">🔍</div>
+                <div class="font-semibold text-slate-200 mb-1">Natural Language Search</div>
+                <div class="text-slate-500 text-xs leading-relaxed">Type what you need in plain English. AI understands context and finds the most relevant products instantly.</div>
+            </div>
+            <div class="glass rounded-2xl p-5 border border-cyan-500/15">
+                <div class="text-2xl mb-3">📊</div>
+                <div class="font-semibold text-slate-200 mb-1">Price Comparison</div>
+                <div class="text-slate-500 text-xs leading-relaxed">Real-time price tracking across Amazon India and Flipkart. Always see the best deal across every major marketplace.</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+async function getRecommendations() {
+    const budget = document.getElementById('rec-budget').value;
+    const category = document.getElementById('rec-cat').value;
+    const preferences = document.getElementById('rec-pref').value;
+    const div = document.getElementById('rec-results');
+    div.innerHTML = '<div class="text-sm text-slate-400 animate-pulse">🤖 Claude AI is finding your perfect products...</div>';
+    div.classList.remove('hidden');
+    const res = await fetch('/ai/recommend/', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'X-CSRFToken': getCsrf()},
+        body: JSON.stringify({budget, category, preferences})
+    });
+    const data = await res.json();
+    if (data.recommendations && data.recommendations.length > 0) {
+        div.innerHTML = '<div class="grid grid-cols-1 md:grid-cols-3 gap-4">' +
+            data.recommendations.map(r => `
+                <div class="glass rounded-2xl p-4">
+                    <div class="font-semibold text-sm text-violet-300 mb-1">${r.name || 'Product'}</div>
+                    <div class="text-xs text-slate-400 mb-2">${r.reason || ''}</div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-green-400 font-bold text-sm">${r.price ? '₹' + r.price : ''}</span>
+                        <span class="ai-badge">${r.match_score || 90}% match</span>
+                    </div>
+                </div>`).join('') + '</div>';
+    } else {
+        div.innerHTML = `<div class="glass rounded-2xl p-4 text-sm text-slate-400">${data.raw || 'No recommendations found. Try adjusting your criteria.'}</div>`;
+    }
+}
+
+async function runSentiment() {
+    const text = document.getElementById('sentiment-input').value.trim();
+    if (!text) return;
+    const reviews = text.split('\n').filter(Boolean);
+    const div = document.getElementById('sentiment-out');
+    div.innerHTML = '<div class="text-sm text-slate-400 animate-pulse">🤖 Analyzing sentiment...</div>';
+    div.classList.remove('hidden');
+    const res = await fetch('/ai/sentiment/', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'X-CSRFToken': getCsrf()},
+        body: JSON.stringify({reviews})
+    });
+    const d = await res.json();
+    const color = d.overall_sentiment === 'positive' ? 'text-green-400' : d.overall_sentiment === 'negative' ? 'text-red-400' : 'text-yellow-400';
+    div.innerHTML = `<div class="glass rounded-2xl p-5">
+        <div class="flex items-center gap-4 mb-4">
+            <div class="${color} font-display font-bold text-3xl">${d.score || 75}/100</div>
+            <div>
+                <div class="${color} font-bold text-lg capitalize">${d.overall_sentiment || 'mixed'} Sentiment</div>
+                <div class="text-slate-400 text-sm">${d.summary || ''}</div>
+            </div>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+            ${d.positives ? `<div><div class="text-green-400 text-xs font-semibold mb-1 uppercase">✓ Positives</div><ul class="space-y-0.5">${d.positives.map(p => `<li class="text-slate-300 text-xs">• ${p}</li>`).join('')}</ul></div>` : ''}
+            ${d.negatives ? `<div><div class="text-red-400 text-xs font-semibold mb-1 uppercase">✗ Negatives</div><ul class="space-y-0.5">${d.negatives.map(p => `<li class="text-slate-300 text-xs">• ${p}</li>`).join('')}</ul></div>` : ''}
+        </div>
+    </div>`;
+}
+
+async function runPricePred() {
+    const pid = document.getElementById('pred-pid').value;
+    if (!pid) return;
+    const div = document.getElementById('pred-out');
+    div.innerHTML = '<div class="text-sm text-slate-400 animate-pulse">📈 AI analyzing market trends...</div>';
+    div.classList.remove('hidden');
+    const res = await fetch('/ai/price-predict/', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'X-CSRFToken': getCsrf()},
+        body: JSON.stringify({product_id: pid})
+    });
+    const d = await res.json();
+    const tColor = d.trend === 'falling' ? 'text-green-400' : d.trend === 'rising' ? 'text-red-400' : 'text-yellow-400';
+    div.innerHTML = `<div class="glass rounded-2xl p-5 grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="text-center"><div class="${tColor} font-display font-bold text-2xl capitalize">${d.trend || 'stable'}</div><div class="text-slate-500 text-xs mt-1">Price Trend</div></div>
+        ${d.predicted_price ? `<div class="text-center"><div class="text-white font-display font-bold text-2xl">₹${d.predicted_price}</div><div class="text-slate-500 text-xs mt-1">30-day Predicted</div></div>` : ''}
+        ${d.confidence ? `<div class="text-center"><div class="text-violet-400 font-display font-bold text-2xl">${d.confidence}%</div><div class="text-slate-500 text-xs mt-1">Confidence</div></div>` : ''}
+        <div class="col-span-2 md:col-span-1 flex items-center"><div class="text-green-300 text-sm font-semibold">${d.advice || 'Prediction complete'}</div></div>
+    </div>`;
+}
+
+async function runSmartSearch() {
+    const query = document.getElementById('ss-input').value.trim();
+    if (!query) return;
+    const div = document.getElementById('ss-out');
+    div.innerHTML = '<div class="text-sm text-slate-400 animate-pulse">🔍 AI searching catalog...</div>';
+    div.classList.remove('hidden');
+    const res = await fetch('/ai/smart-search/', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'X-CSRFToken': getCsrf()},
+        body: JSON.stringify({query})
+    });
+    const data = await res.json();
+    if (data.results && data.results.length > 0) {
+        div.innerHTML = `<div class="text-xs text-slate-400 mb-3">🤖 AI found ${data.results.length} matching products:</div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">` +
+        data.results.map(p => `<a href="/product/${p.id}/" class="glass rounded-xl p-3 hover:border-violet-500/40 transition-colors">
+            <img src="${p.image || ''}" class="w-full h-24 object-cover rounded-lg mb-2" onerror="this.src='https://placehold.co/200x100/161628/7C3AED?text=P'">
+            <div class="text-xs font-semibold line-clamp-2">${p.name}</div>
+            <div class="text-green-400 font-bold text-sm mt-1">₹${p.price}</div>
+        </a>`).join('') + '</div>';
+    } else {
+        div.innerHTML = '<div class="text-slate-400 text-sm glass rounded-xl p-4">No AI matches. Try rephrasing your query.</div>';
+    }
+}
+</script>
+{% endblock %}
