@@ -265,11 +265,11 @@ CRITICAL RULES:
             # 1. Greeting Intent
             if any(w in user_msg_lower for w in ["hello", "hi", "hey", "hola", "greetings", "good morning", "good afternoon"]):
                 reply = (
-                    "Hello there! I'm **ShopBot AI**, your elite personal Fashion Stylist and Smart Shopping Assistant. ✨\n\n"
+                    "Hello there! I'm ShopBot AI, your elite personal Fashion Stylist and Smart Shopping Assistant.\n\n"
                     "I am fully ready to assist you today! Here is how we can shop smarter:\n"
-                    "- 🎯 **Stylist Recommendations:** Ask me to recommend items (e.g. \"find a summer dress under 2000\" or \"suggest running sneakers\").\n"
-                    "- 📈 **Price Comparison & Predictions:** Compare pricing across Amazon/Flipkart or predict future prices.\n"
-                    "- 💬 **Review Sentiment Verdicts:** Ask me about buyer sentiment on specific products.\n\n"
+                    "- **Stylist Recommendations:** Ask me to recommend items (e.g. \"find a summer dress under 2000\" or \"suggest running sneakers\").\n"
+                    "- **Price Comparison & Predictions:** Compare pricing across Amazon/Flipkart or predict future prices.\n"
+                    "- **Review Sentiment Verdicts:** Ask me about buyer sentiment on specific products.\n\n"
                     "What category are you interested in today? We have trending lines in **Clothing**, **Footwear**, **Cosmetics**, and **Fashion Accessories**!"
                 )
             
@@ -289,11 +289,11 @@ CRITICAL RULES:
                     trend = "falling" if variation < -0.01 else "rising" if variation > 0.01 else "stable"
                     
                     reply = (
-                        f"📊 **Price Analysis for {p.name}:**\n\n"
+                        f"**Price Analysis for {p.name}:**\n\n"
                         f"- **NexCart Price:** **₹{p.our_price}** (Best Value!)\n"
                         f"- **Amazon India:** {amazon_str}\n"
                         f"- **Flipkart Price:** {flipkart_str}\n\n"
-                        f"📈 **Price Trend Forecast (Next 30 Days):**\n"
+                        f"**Price Trend Forecast (Next 30 Days):**\n"
                         f"- **Trend Signal:** {trend.capitalize()} trend predicted ({abs(variation)*100:.0f}% movement)\n"
                         f"- **Target Price:** ₹{predicted}\n"
                         f"- **Buying Recommendation:** " + (
@@ -317,10 +317,10 @@ CRITICAL RULES:
                 if matched_products:
                     p = matched_products[0]
                     reply = (
-                        f"💬 **Customer Review Sentiment Verdict for {p.name}:**\n\n"
-                        f"- **Average Customer Rating:** {p.rating}⭐ (based on {p.reviews_count} verified purchases)\n"
+                        f"**Customer Review Sentiment Verdict for {p.name}:**\n\n"
+                        f"- **Average Customer Rating:** {p.rating} out of 5 (based on {p.reviews_count} verified purchases)\n"
                         f"- **AI Sentiment Summary:** {p.ai_summary or 'Review sentiment for this item is 90% Positive. Buyers highly praise the quality, comfort, and premium styling.'}\n\n"
-                        f"✨ *Stylist Tip:* Customer feedback suggests that this item runs true to size and represents exceptional quality for its category."
+                        f"*Stylist Tip:* Customer feedback suggests that this item runs true to size and represents exceptional quality for its category."
                     )
                 else:
                     reply = (
@@ -360,7 +360,7 @@ CRITICAL RULES:
                     prod_lines = []
                     for p in matched_products[:3]:
                         prod_lines.append(
-                            f"- **{p.name}** (₹{p.our_price}) — {p.rating}⭐ rating. {p.description[:90]}..."
+                            f"- **{p.name}** (₹{p.our_price}) — {p.rating} out of 5 stars. {p.description[:90]}..."
                         )
                     prod_text = "\n".join(prod_lines)
                     
@@ -371,19 +371,19 @@ CRITICAL RULES:
                     if "clothing" in p_cat_lower:
                         matching = Product.objects.filter(category__name__icontains="footwear")[:1]
                         if matching:
-                            cross_rec = f"\n\n✨ **Stylist Tip:** To complete this stunning look, I highly recommend pairing the **{p.name}** with the **{matching[0].name}** (₹{matching[0].our_price})!"
+                            cross_rec = f"\n\n**Stylist Tip:** To complete this stunning look, I highly recommend pairing the **{p.name}** with the **{matching[0].name}** (₹{matching[0].our_price})!"
                     elif "footwear" in p_cat_lower:
                         matching = Product.objects.filter(category__name__icontains="clothing")[:1]
                         if matching:
-                            cross_rec = f"\n\n✨ **Stylist Tip:** These shoes pair beautifully with the **{matching[0].name}** (₹{matching[0].our_price})!"
+                            cross_rec = f"\n\n**Stylist Tip:** These shoes pair beautifully with the **{matching[0].name}** (₹{matching[0].our_price})!"
                     elif "makeup" in p_cat_lower:
                         matching = Product.objects.filter(category__name__icontains="accessories")[:1]
                         if matching:
-                            cross_rec = f"\n\n✨ **Stylist Tip:** Enhance your makeup look by adding the **{matching[0].name}** (₹{matching[0].our_price}) to your style!"
+                            cross_rec = f"\n\n**Stylist Tip:** Enhance your makeup look by adding the **{matching[0].name}** (₹{matching[0].our_price}) to your style!"
                     else:
                         matching = Product.objects.filter(is_featured=True).exclude(id=p.id)[:1]
                         if matching:
-                            cross_rec = f"\n\n✨ **Stylist Tip:** For a matching combination, take a look at the featured **{matching[0].name}** (₹{matching[0].our_price})!"
+                            cross_rec = f"\n\n**Stylist Tip:** For a matching combination, take a look at the featured **{matching[0].name}** (₹{matching[0].our_price})!"
 
                     reply = (
                         "I have curated a special selection of products matching your style interest:\n\n"
@@ -393,7 +393,7 @@ CRITICAL RULES:
                 else:
                     # Generic recommendation of featured items
                     featured = Product.objects.filter(is_featured=True)[:3]
-                    prod_lines = [f"- **{p.name}** (₹{p.our_price}) — {p.rating}⭐" for p in featured]
+                    prod_lines = [f"- **{p.name}** (₹{p.our_price}) — {p.rating} / 5" for p in featured]
                     prod_text = "\n".join(prod_lines)
                     reply = (
                         "I couldn't find products that match those exact parameters in our catalog, but here are our top trending items that customers love:\n\n"
@@ -410,9 +410,9 @@ CRITICAL RULES:
                     
                     reply = (
                         f"I found a great option: **{p.name}**!\n\n"
-                        f"💰 **NexCart Price:** **₹{p.our_price}** (Amazon: {amazon_str})\n"
-                        f"⭐ **Customer Rating:** {p.rating}⭐\n\n"
-                        f"📝 **Reviews Verdict:** {p.ai_summary or 'Excellent choice with highly positive customer feedback.'}\n\n"
+                        f"**NexCart Price:** **₹{p.our_price}** (Amazon: {amazon_str})\n"
+                        f"**Customer Rating:** {p.rating} / 5\n\n"
+                        f"**Reviews Verdict:** {p.ai_summary or 'Excellent choice with highly positive customer feedback.'}\n\n"
                         f"Would you like to compare its price details or get a stylist recommendation pairing?"
                     )
                 else:
@@ -498,9 +498,9 @@ Only return valid JSON, no extra text."""
                 
                 if matched_keywords:
                     match_str = ", ".join(matched_keywords)
-                    reason = f"Excellent fit for your budget! Features your preferred details: {match_str}. Offers a high {p.rating}⭐ customer rating."
+                    reason = f"Excellent fit for your budget! Features your preferred details: {match_str}. Offers a high {p.rating} out of 5 customer rating."
                 else:
-                    reason = f"Top-rated {p.category.name} item fitting your criteria with {p.rating}⭐ rating and great style."
+                    reason = f"Top-rated {p.category.name} item fitting your criteria with {p.rating} rating and great style."
                 
                 ranked_list.append({
                     "name": p.name,
@@ -519,7 +519,7 @@ Only return valid JSON, no extra text."""
                 for p in Product.objects.all()[:3]:
                     recs.append({
                         "name": p.name,
-                        "reason": f"Popular choice in store with excellent {p.rating}⭐ customer rating.",
+                        "reason": f"Popular choice in store with excellent {p.rating} out of 5 customer rating.",
                         "price": str(p.our_price),
                         "match_score": 80
                     })

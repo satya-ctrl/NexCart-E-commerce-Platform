@@ -2,7 +2,7 @@
 {% block title %}Cart — NexCart AI{% endblock %}
 {% block content %}
 <div class="max-w-5xl mx-auto px-6 py-10">
-    <h1 class="font-display font-bold text-3xl mb-8">🛒 Your Cart</h1>
+    <h1 class="font-display font-bold text-3xl mb-8"><i class="fas fa-shopping-cart text-violet-400 mr-2"></i> Your Cart</h1>
     {% if items %}
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div class="lg:col-span-2 space-y-4">
@@ -37,7 +37,7 @@
     </div>
     {% else %}
     <div class="text-center py-20">
-        <div class="text-6xl mb-4">🛒</div>
+        <div class="text-6xl mb-4 text-slate-600"><i class="fas fa-shopping-cart"></i></div>
         <div class="font-display font-bold text-2xl mb-2">Your cart is empty</div>
         <p class="text-slate-500 mb-6">Add products to get started</p>
         <a href="/products/" class="btn-primary px-8 py-3 rounded-full text-white font-semibold">Shop Now</a>

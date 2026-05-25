@@ -36,10 +36,10 @@ def register(request):
                 user.groups.add(group)
             login(request, user)
             if role == 'seller':
-                messages.success(request, f"Welcome to NexCart Seller Center, {user.first_name or user.username}! Start listing your inventory. 🚀")
+                messages.success(request, f"Welcome to NexCart Seller Center, {user.first_name or user.username}! Start listing your inventory.")
                 return redirect('ai_features:ai_dashboard')
             else:
-                messages.success(request, f"Welcome to NexCart AI, {user.first_name or user.username}! 🎉")
+                messages.success(request, f"Welcome to NexCart AI, {user.first_name or user.username}!")
                 return redirect('store:home')
     else:
         form = UserRegisterForm()
@@ -54,10 +54,10 @@ def login_view(request):
             user = form.get_user()
             login(request, user)
             if user.groups.filter(name='Sellers').exists():
-                messages.success(request, f"Welcome back to Seller Center, {user.first_name or user.username}! 💼")
+                messages.success(request, f"Welcome back to Seller Center, {user.first_name or user.username}!")
                 return redirect('ai_features:ai_dashboard')
             else:
-                messages.success(request, f"Welcome back, {user.first_name or user.username}! 👋")
+                messages.success(request, f"Welcome back, {user.first_name or user.username}!")
                 return redirect(request.GET.get('next', 'store:home'))
     else:
         form = AuthenticationForm()

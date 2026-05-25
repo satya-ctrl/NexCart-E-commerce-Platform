@@ -11,7 +11,7 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
         <!-- AMAZON -->
         <div class="glass rounded-3xl p-6 {% if product.amazon_price and product.amazon_price == product.best_price %}border-green-500/30{% else %}border-white/10{% endif %}">
-            <div class="text-4xl mb-3 text-center">🛒</div>
+            <div class="text-4xl mb-3 text-center text-orange-400"><i class="fab fa-amazon"></i></div>
             <div class="text-center font-display font-bold text-xl text-orange-400 mb-1">Amazon India</div>
             <div class="text-center text-slate-500 text-sm mb-4">amazon.in</div>
             {% if product.amazon_price %}
@@ -29,7 +29,7 @@
         <div class="glass rounded-3xl p-6 border-green-500/40 relative overflow-hidden">
             <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-violet-600 to-cyan-500"></div>
             <div class="absolute top-3 right-3 bg-green-500 text-white text-xs px-2 py-0.5 rounded-full font-bold">BEST!</div>
-            <div class="text-4xl mb-3 text-center">⚡</div>
+            <div class="text-4xl mb-3 text-center text-yellow-400"><i class="fas fa-bolt"></i></div>
             <div class="text-center font-display font-bold text-xl gradient-text mb-1">NexCart AI</div>
             <div class="text-center text-slate-500 text-sm mb-4">nexcart.ai</div>
             <div class="text-center font-display font-bold text-4xl gradient-text mb-2">₹{{ product.our_price }}</div>
@@ -43,7 +43,7 @@
 
         <!-- FLIPKART -->
         <div class="glass rounded-3xl p-6 {% if product.flipkart_price and product.flipkart_price == product.best_price %}border-green-500/30{% else %}border-white/10{% endif %}">
-            <div class="text-4xl mb-3 text-center">🔵</div>
+            <div class="text-4xl mb-3 text-center text-blue-400"><i class="fas fa-shopping-bag"></i></div>
             <div class="text-center font-display font-bold text-xl text-blue-400 mb-1">Flipkart</div>
             <div class="text-center text-slate-500 text-sm mb-4">flipkart.com</div>
             {% if product.flipkart_price %}
@@ -60,7 +60,7 @@
 
     <!-- SAVINGS TABLE -->
     <div class="glass rounded-3xl p-6 mb-8">
-        <h2 class="font-display font-bold text-xl mb-4">💰 Your Savings</h2>
+        <h2 class="font-display font-bold text-xl mb-4"><i class="fas fa-piggy-bank text-green-400 mr-2"></i> Your Savings</h2>
         <div class="grid grid-cols-2 gap-4">
             {% if product.amazon_price %}
             <div class="glass rounded-2xl p-4">
@@ -88,17 +88,17 @@
         </h2>
         <div class="space-y-4">
             <div class="flex items-center justify-between text-sm py-2 border-b border-white/5">
-                <span class="text-slate-400">⚡ NexCart AI Eco Score</span>
+                <span class="text-slate-400"><i class="fas fa-leaf text-emerald-400 mr-1.5"></i> NexCart AI Eco Score</span>
                 <span class="text-emerald-400 font-bold flex items-center gap-1.5">
                     <i class="fas fa-leaf text-xs"></i> {{ product.eco_rating }}/100 ({% if product.eco_rating >= 90 %}Excellent{% elif product.eco_rating >= 80 %}Good{% elif product.eco_rating >= 60 %}Moderate{% else %}Low{% endif %})
                 </span>
             </div>
             <div class="flex items-center justify-between text-sm py-2 border-b border-white/5">
-                <span class="text-slate-400">🛒 Amazon Sustainability Data</span>
+                <span class="text-slate-400"><i class="fab fa-amazon text-orange-400 mr-1.5"></i> Amazon Sustainability Data</span>
                 <span class="text-slate-500">Not verified / Unspecified</span>
             </div>
             <div class="flex items-center justify-between text-sm py-2">
-                <span class="text-slate-400">🔵 Flipkart Sustainability Data</span>
+                <span class="text-slate-400"><i class="fas fa-shopping-bag text-blue-400 mr-1.5"></i> Flipkart Sustainability Data</span>
                 <span class="text-slate-500">Not verified / Unspecified</span>
             </div>
         </div>

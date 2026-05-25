@@ -39,7 +39,7 @@
                             <select name="category" required class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-violet-500 transition-colors">
                                 <option value="" disabled selected class="bg-black text-slate-400">Select Category</option>
                                 {% for cat in categories %}
-                                <option value="{{ cat.id }}" class="bg-black text-slate-200">{{ cat.icon }} {{ cat.name }}</option>
+                                <option value="{{ cat.id }}" class="bg-black text-slate-200">{{ cat.name }}</option>
                                 {% endfor %}
                             </select>
                         </div>

@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 class Category(models.Model):
     name = models.CharField(max_length=200)
     slug = models.SlugField(unique=True)
-    icon = models.CharField(max_length=50, default='🛍️')
+    icon = models.CharField(max_length=50, default='fas fa-shopping-bag')
 
     class Meta:
         verbose_name_plural = 'Categories'

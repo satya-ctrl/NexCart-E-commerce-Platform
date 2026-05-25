@@ -14,7 +14,7 @@
         <div>
             <div class="flex items-center gap-2 mb-3">
                 <span class="ai-badge">{{ product.category.name }}</span>
-                {% if product.is_ai_recommended %}<span class="ai-badge">🤖 AI Recommended</span>{% endif %}
+                {% if product.is_ai_recommended %}<span class="ai-badge"><i class="fas fa-brain text-[10px] mr-1"></i> AI Recommended</span>{% endif %}
                 {% if product.brand %}<span class="text-xs text-slate-500">{{ product.brand }}</span>{% endif %}
             </div>
             <h1 class="font-display font-bold text-3xl text-white mb-3">{{ product.name }}</h1>
@@ -25,7 +25,7 @@
                     {% endfor %}
                 </div>
                 <span class="text-slate-400 text-sm">{{ product.rating }} ({{ product.reviews_count }} reviews)</span>
-                <span class="text-green-400 text-sm">{% if product.stock > 0 %}✓ In Stock ({{ product.stock }}){% else %}✗ Out of Stock{% endif %}</span>
+                <span class="text-green-400 text-sm">{% if product.stock > 0 %}In Stock ({{ product.stock }}){% else %}Out of Stock{% endif %}</span>
             </div>
 
             <!-- PRICE COMPARISON TABLE -->
@@ -37,7 +37,7 @@
                     {% if product.amazon_price %}
                     <div class="flex items-center justify-between py-2 border-b border-white/5">
                         <div class="flex items-center gap-3">
-                            <span class="text-2xl">🛒</span>
+                            <span class="text-xl text-orange-400"><i class="fab fa-amazon"></i></span>
                             <div>
                                 <div class="font-semibold text-sm text-orange-400">Amazon India</div>
                                 <div class="text-xs text-slate-500">india.amazon.com</div>
@@ -54,7 +54,7 @@
                     {% if product.flipkart_price %}
                     <div class="flex items-center justify-between py-2 border-b border-white/5">
                         <div class="flex items-center gap-3">
-                            <span class="text-2xl">🔵</span>
+                            <span class="text-xl text-blue-400"><i class="fas fa-shopping-bag"></i></span>
                             <div>
                                 <div class="font-semibold text-sm text-blue-400">Flipkart</div>
                                 <div class="text-xs text-slate-500">flipkart.com</div>
@@ -70,7 +70,7 @@
                     {% endif %}
                     <div class="flex items-center justify-between py-2">
                         <div class="flex items-center gap-3">
-                            <span class="text-2xl">⚡</span>
+                            <span class="text-xl text-violet-400"><i class="fas fa-bolt"></i></span>
                             <div>
                                 <div class="font-semibold text-sm text-green-400">NexCart AI</div>
                                 <div class="text-xs text-slate-500">Best Price!</div>
@@ -170,7 +170,7 @@
                 {% endfor %}
             {% else %}
                 <div class="glass rounded-2xl p-6 text-center text-slate-500">
-                    <div class="text-3xl mb-2">💬</div>
+                    <div class="text-3xl mb-2 text-slate-500"><i class="fas fa-comments"></i></div>
                     <p>No reviews yet. Be the first to review!</p>
                 </div>
             {% endif %}
@@ -226,7 +226,7 @@ setRating(5);
 
 async function predictPrice(pid) {
     const div = document.getElementById('price-prediction');
-    div.innerHTML = '<div class="text-xs text-slate-400 animate-pulse">🤖 AI analyzing price trends...</div>';
+    div.innerHTML = '<div class="text-xs text-slate-400 animate-pulse">AI analyzing price trends...</div>';
     div.classList.remove('hidden');
     const res = await fetch('/ai/price-predict/', {
         method: 'POST',
@@ -247,7 +247,7 @@ async function analyzeReviews() {
     const reviews = [...document.querySelectorAll('.glass p.text-slate-400')].map(el => el.textContent.trim()).filter(Boolean);
     if (!reviews.length) return;
     const div = document.getElementById('sentiment-result');
-    div.innerHTML = '<div class="text-xs text-slate-400 animate-pulse">🤖 Analyzing reviews...</div>';
+    div.innerHTML = '<div class="text-xs text-slate-400 animate-pulse">Analyzing reviews...</div>';
     div.classList.remove('hidden');
     const res = await fetch('/ai/sentiment/', {
         method: 'POST',
@@ -262,8 +262,8 @@ async function analyzeReviews() {
             ${d.score ? `<span class="text-slate-400">${d.score}/100</span>` : ''}
         </div>
         <p class="text-slate-300">${d.summary || 'Analysis complete'}</p>
-        ${d.positives ? `<div class="mt-2"><span class="text-green-400">✓ </span>${d.positives.join(', ')}</div>` : ''}
-        ${d.negatives ? `<div class="mt-1"><span class="text-red-400">✗ </span>${d.negatives.join(', ')}</div>` : ''}
+        ${d.positives ? `<div class="mt-2"><span class="text-green-400">Positives: </span>${d.positives.join(', ')}</div>` : ''}
+        ${d.negatives ? `<div class="mt-1"><span class="text-red-400">Negatives: </span>${d.negatives.join(', ')}</div>` : ''}
     </div>`;
 }
 </script>

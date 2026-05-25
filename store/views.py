@@ -119,7 +119,7 @@ def checkout(request):
         for item in items:
             OrderItem.objects.create(order=order, product=item.product, quantity=item.quantity, price=item.product.our_price)
         cart_obj.items.all().delete()
-        messages.success(request, f"Order #{order.id} placed successfully! 🎉")
+        messages.success(request, f"Order #{order.id} placed successfully!")
         return redirect('store:order_confirmation', pk=order.id)
     return render(request, 'store/checkout.html', {'items': items, 'total': total})
 
@@ -211,7 +211,7 @@ def seller_dashboard(request):
             eco_rating=eco_rating,
             tags=tags
         )
-        messages.success(request, f"Product '{name}' successfully uploaded to NexCart! 🚀")
+        messages.success(request, f"Product '{name}' successfully uploaded to NexCart!")
         return redirect('store:seller_dashboard')
 
     products = Product.objects.all().order_by('-created_at')
@@ -231,7 +231,7 @@ def seller_login(request):
             user = form.get_user()
             if user.groups.filter(name='Sellers').exists():
                 login(request, user)
-                messages.success(request, f"Welcome back to Seller Center, {user.first_name or user.username}! 💼")
+                messages.success(request, f"Welcome back to Seller Center, {user.first_name or user.username}!")
                 return redirect('store:seller_dashboard')
             else:
                 messages.error(request, "This account is not registered as a Seller. Please register a seller account below.")
@@ -253,7 +253,7 @@ def seller_register(request):
             group, _ = Group.objects.get_or_create(name='Sellers')
             user.groups.add(group)
             login(request, user)
-            messages.success(request, f"Welcome to NexCart Seller Center, {user.first_name or user.username}! Start listing your inventory. 🚀")
+            messages.success(request, f"Welcome to NexCart Seller Center, {user.first_name or user.username}! Start listing your inventory.")
             return redirect('store:seller_dashboard')
     else:
         form = UserRegisterForm()

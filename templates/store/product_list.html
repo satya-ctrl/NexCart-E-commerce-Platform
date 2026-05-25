@@ -15,7 +15,7 @@
                             <a href="/products/{% if search_q %}?q={{ search_q }}{% endif %}" class="text-sm py-1.5 px-3 rounded-xl transition-colors {% if not selected_category %}bg-violet-600/20 text-violet-300{% else %}text-slate-400 hover:text-white{% endif %}">All Products</a>
                             {% for cat in categories %}
                             <a href="/products/?category={{ cat.slug }}{% if search_q %}&q={{ search_q }}{% endif %}" class="text-sm py-1.5 px-3 rounded-xl transition-colors {% if selected_category == cat.slug %}bg-violet-600/20 text-violet-300{% else %}text-slate-400 hover:text-white{% endif %}">
-                                {{ cat.icon }} {{ cat.name }}
+                                {% if "fa-" in cat.icon %}<i class="{{ cat.icon }} mr-1"></i>{% else %}{{ cat.icon }} {% endif %}{{ cat.name }}
                             </a>
                             {% endfor %}
                         </div>
@@ -41,7 +41,7 @@
 
                 <!-- AI SEARCH BOX -->
                 <div class="mt-6 pt-5 border-t border-white/10">
-                    <div class="text-xs text-slate-400 font-semibold mb-2 uppercase tracking-wide">🤖 AI Smart Search</div>
+                    <div class="text-xs text-slate-400 font-semibold mb-2 uppercase tracking-wide"><i class="fas fa-robot text-violet-400 mr-1"></i> AI Smart Search</div>
                     <input id="ai-search-input" type="text" placeholder="e.g. best laptop under 50k..." class="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs text-slate-300 focus:outline-none focus:border-violet-500 mb-2">
                     <button onclick="aiSearch()" class="w-full btn-cyan py-2 rounded-xl text-white text-xs font-medium">
                         <i class="fas fa-robot mr-1"></i> AI Search
@@ -74,7 +74,7 @@
                         <div class="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-lg">{{ product.discount_percent }}% OFF</div>
                         {% endif %}
                         {% if product.is_ai_recommended %}
-                        <div class="absolute top-2 right-2 ai-badge">🤖 AI</div>
+                        <div class="absolute top-2 right-2 ai-badge"><i class="fas fa-brain text-[10px] mr-1"></i> AI</div>
                         {% endif %}
                         <button onclick="{% if user.is_authenticated %}toggleWishlist({{ product.id }}){% else %}window.location='/accounts/login/'{% endif %}" id="wish-{{ product.id }}" class="absolute bottom-2 right-2 w-7 h-7 glass rounded-full flex items-center justify-center text-slate-400 hover:text-pink-400 transition-colors text-xs">
                             <i class="fas fa-heart"></i>
@@ -97,12 +97,12 @@
                         <!-- PRICE COMPARISON MINI -->
                         <div class="mt-3 space-y-1 text-xs">
                             {% if product.amazon_price %}
-                            <div class="flex justify-between text-slate-500"><span>🛒 Amazon</span><span>₹{{ product.amazon_price }}</span></div>
+                            <div class="flex justify-between text-slate-500"><span><i class="fab fa-amazon text-orange-400 mr-1"></i> Amazon</span><span>₹{{ product.amazon_price }}</span></div>
                             {% endif %}
                             {% if product.flipkart_price %}
-                            <div class="flex justify-between text-slate-500"><span>🔵 Flipkart</span><span>₹{{ product.flipkart_price }}</span></div>
+                            <div class="flex justify-between text-slate-500"><span><i class="fas fa-shopping-bag text-blue-400 mr-1"></i> Flipkart</span><span>₹{{ product.flipkart_price }}</span></div>
                             {% endif %}
-                            <div class="flex justify-between font-semibold text-green-400"><span>⚡ Our Price</span><span>₹{{ product.our_price }}</span></div>
+                            <div class="flex justify-between font-semibold text-green-400"><span><i class="fas fa-bolt text-yellow-400 mr-1"></i> Our Price</span><span>₹{{ product.our_price }}</span></div>
                         </div>
                         <div class="mt-3 flex gap-2">
                             <a href="/product/{{ product.id }}/compare/" class="flex-1 glass py-1.5 rounded-lg text-center text-xs text-slate-300 hover:border-violet-500/40 transition-colors">Compare</a>
@@ -114,7 +114,7 @@
             </div>
             {% else %}
             <div class="text-center py-20">
-                <div class="text-5xl mb-4">🔍</div>
+                <div class="text-5xl mb-4 text-slate-600"><i class="fas fa-search"></i></div>
                 <div class="font-display font-bold text-xl mb-2">No products found</div>
                 <p class="text-slate-500 mb-6">Try a different search or category</p>
                 <a href="/products/" class="btn-primary px-6 py-3 rounded-full text-white">Show All Products</a>
@@ -131,7 +131,7 @@ async function aiSearch() {
     const query = document.getElementById('ai-search-input').value.trim();
     if (!query) return;
     const resultsDiv = document.getElementById('ai-results');
-    resultsDiv.innerHTML = '<div class="text-xs text-slate-400">🤖 AI searching...</div>';
+    resultsDiv.innerHTML = '<div class="text-xs text-slate-400"><i class="fas fa-robot text-violet-400 mr-1 animate-pulse"></i> AI searching...</div>';
     resultsDiv.classList.remove('hidden');
 
     try {

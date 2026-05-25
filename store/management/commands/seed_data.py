@@ -5,14 +5,14 @@ from store.models import Category, Product
 
 
 CATEGORIES = [
-    ("Clothing & Apparel", "👗"),
-    ("Footwear", "👟"),
-    ("Makeup & Cosmetics", "💄"),
-    ("Fashion Accessories", "🕶️"),
-    ("Electronics", "⚡"),
-    ("Smartphones", "📱"),
-    ("Laptops", "💻"),
-    ("Audio", "🎧"),
+    ("Clothing & Apparel", "fas fa-tshirt"),
+    ("Footwear", "fas fa-shoe-prints"),
+    ("Makeup & Cosmetics", "fas fa-magic"),
+    ("Fashion Accessories", "fas fa-glasses"),
+    ("Electronics", "fas fa-bolt"),
+    ("Smartphones", "fas fa-mobile-alt"),
+    ("Laptops", "fas fa-laptop"),
+    ("Audio", "fas fa-headphones"),
 ]
 
 PRODUCTS = [
