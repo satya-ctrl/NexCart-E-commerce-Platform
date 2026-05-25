@@ -556,10 +556,10 @@ class Command(BaseCommand):
 
         extra_count = 0
         attempts = 0
-        target_extra = 100
+        target_extra = 500
         generated_names = set()
 
-        while extra_count < target_extra and attempts < 1500:
+        while extra_count < target_extra and attempts < 6000:
             attempts += 1
             cat_name = random.choice(CATEGORIES)[0]
             cat_obj = cat_map.get(cat_name)
