@@ -455,6 +455,164 @@ class Command(BaseCommand):
             count += 1
 
         self.stdout.write(f'[OK] {count} products seeded')
+
+        # Generate 100 more dynamic products for testing
+        self.stdout.write('Generating 100 additional products for a rich catalog...')
+        import random
+
+        brands_by_cat = {
+            "Clothing & Apparel": ["Zara", "H&M", "Levi's", "Fabindia", "Roadster", "Allen Solly", "Nike", "Adidas", "Puma", "Tommy Hilfiger"],
+            "Footwear": ["Nike", "Adidas", "Puma", "Clarks", "Birkenstock", "Steve Madden", "Reebok", "Woodland", "Bata", "Crocs"],
+            "Makeup & Cosmetics": ["M.A.C", "Maybelline", "L'Oreal", "The Ordinary", "Clinique", "Lakme", "Nivea", "Forest Essentials", "Plum", "Mamaearth"],
+            "Fashion Accessories": ["Ray-Ban", "Fossil", "Michael Kors", "Tommy Hilfiger", "Fastrack", "Casio", "Titan", "Baggit", "Caprese", "Wildhorn"],
+            "Electronics": ["Sony", "Samsung", "Bose", "JBL", "Realme", "Xiaomi", "OnePlus", "Marshall", "Anker", "TP-Link"],
+            "Smartphones": ["Apple", "Samsung", "OnePlus", "Google", "Xiaomi", "vivo", "OPPO", "Motorola", "Nothing", "Realme"],
+            "Laptops": ["Dell", "HP", "Lenovo", "Apple", "Asus", "Acer", "MSI", "Microsoft", "Xiaomi", "Samsung"],
+            "Audio": ["Sony", "Sennheiser", "Audio-Technica", "Bose", "JBL", "OnePlus", "Boat", "Jabra", "Shure", "Beyerdynamic"]
+        }
+
+        adjectives = ["Classic", "Breathable", "Premium", "Comfort", "Slim-Fit", "Organic", "Oversized", "Designer", "Textured", "Lightweight", "Durable", "Sleek", "Minimalist", "Waterproof", "High-Performance", "Eco-Friendly", "Smart", "Ultra", "Elite", "Modern"]
+
+        nouns_by_cat = {
+            "Clothing & Apparel": ["Cotton T-Shirt", "Summer Dress", "Denim Jeans", "Hooded Sweatshirt", "Slim Fit Chinos", "Linen Blazer", "Ethnic Kurti", "Woolen Cardigan", "Silk Saree", "Casual Shorts"],
+            "Footwear": ["Running Sneakers", "Leather Oxford Shoes", "Formal Derby Shoes", "Casual Loafers", "Walking Shoes", "Suede Boots", "Comfort Sandals", "Sports Cleats", "High Heel Pumps"],
+            "Makeup & Cosmetics": ["Matte Lipstick", "Hydrating Serum", "Liquid Foundation", "Waterproof Mascara", "Face Moisturizer", "Sunscreen SPF 50", "Exfoliating Scrub", "Clay Mask", "Eye Pencil"],
+            "Fashion Accessories": ["Wayfarer Sunglasses", "Leather Wallet", "Smart Watch", "Reversible Belt", "Shoulder Tote Bag", "Metal Cuff Bracelet", "Silk Tie", "Travel Backpack", "Aviator Sunglasses"],
+            "Electronics": ["Smart TV", "Wireless Charger", "Portable Bluetooth Speaker", "Action Camera", "Power Bank", "Smart Bulb", "Wi-Fi Router", "VR Headset", "Noise Cancelling Earbuds"],
+            "Smartphones": ["Flagship 5G Phone", "Android Smartphone", "Pro Max Device", "Ultra Smartphone", "Foldable Phone", "Lite Mobile"],
+            "Laptops": ["Slim Ultrabook", "Gaming Laptop", "Convertible 2-in-1", "Professional Workstation", "Student Laptop"],
+            "Audio": ["Over-Ear Headphones", "True Wireless Earbuds", "Studio Monitor Headset", "Wireless Neckband", "Soundbar Speaker"]
+        }
+
+        unsplash_by_cat = {
+            "Clothing & Apparel": [
+                "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=600",
+                "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600",
+                "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=600",
+                "https://images.unsplash.com/photo-1578932750294-f5075e85f44a?w=600",
+                "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=600"
+            ],
+            "Footwear": [
+                "https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=600",
+                "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?w=600",
+                "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=600",
+                "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=600",
+                "https://images.unsplash.com/photo-1512374382149-433853003064?w=600"
+            ],
+            "Makeup & Cosmetics": [
+                "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600",
+                "https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=600",
+                "https://images.unsplash.com/photo-1526045431048-f857369aba09?w=600",
+                "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=600",
+                "https://images.unsplash.com/photo-1608248597279-f99d160bfcbc?w=600"
+            ],
+            "Fashion Accessories": [
+                "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=600",
+                "https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?w=600",
+                "https://images.unsplash.com/photo-1509695507497-903c140c43b0?w=600",
+                "https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=600",
+                "https://images.unsplash.com/photo-1611085583191-a3b1a30a8a3a?w=600"
+            ],
+            "Electronics": [
+                "https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?w=600",
+                "https://images.unsplash.com/photo-1593340061790-1c02e1c944d1?w=600",
+                "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=600",
+                "https://images.unsplash.com/photo-1588508065123-287b28e013da?w=600",
+                "https://images.unsplash.com/photo-1555664424-778a1e5e1b48?w=600"
+            ],
+            "Smartphones": [
+                "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=600",
+                "https://images.unsplash.com/photo-1580910051074-3eb694886505?w=600",
+                "https://images.unsplash.com/photo-1565849906461-0e443530e24c?w=600",
+                "https://images.unsplash.com/photo-1605236453806-6ff36851218e?w=600",
+                "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=600"
+            ],
+            "Laptops": [
+                "https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=600",
+                "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=600",
+                "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=600",
+                "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=600",
+                "https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=600"
+            ],
+            "Audio": [
+                "https://images.unsplash.com/photo-1484704849700-f032a568e944?w=600",
+                "https://images.unsplash.com/photo-1583394838336-acd977736f90?w=600",
+                "https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?w=600",
+                "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=600",
+                "https://images.unsplash.com/photo-1577174881658-0f30ed549adc?w=600"
+            ]
+        }
+
+        price_ranges = {
+            "Clothing & Apparel": (799, 4500),
+            "Footwear": (1299, 12000),
+            "Makeup & Cosmetics": (299, 3500),
+            "Fashion Accessories": (499, 15000),
+            "Electronics": (999, 35000),
+            "Smartphones": (12000, 95000),
+            "Laptops": (35000, 150000),
+            "Audio": (999, 25000)
+        }
+
+        extra_count = 0
+        attempts = 0
+        target_extra = 100
+        generated_names = set()
+
+        while extra_count < target_extra and attempts < 1500:
+            attempts += 1
+            cat_name = random.choice(CATEGORIES)[0]
+            cat_obj = cat_map.get(cat_name)
+            if not cat_obj:
+                continue
+
+            brand = random.choice(brands_by_cat[cat_name])
+            adj = random.choice(adjectives)
+            noun = random.choice(nouns_by_cat[cat_name])
+            p_name = f"{brand} {adj} {noun}"
+
+            if p_name in generated_names or Product.objects.filter(name=p_name).exists():
+                continue
+
+            generated_names.add(p_name)
+            
+            min_p, max_p = price_ranges[cat_name]
+            our_price = int(random.uniform(min_p, max_p))
+            amazon_price = int(our_price * random.uniform(1.08, 1.25))
+            flipkart_price = int(our_price * random.uniform(1.04, 1.18))
+            
+            discount = int(((amazon_price - our_price) / amazon_price) * 100)
+
+            description = f"Experience the ultimate {noun.lower()} from {brand}. Crafted with {adj.lower()} design principles, this product brings premium quality and exceptional utility to your daily life. Features highly durable construction and eco-conscious design."
+            ai_summary = f"Review sentiment is 90% Positive. Buyers love the {adj.lower()} design and reliable functionality. Highly recommended as a high-value purchase compared to market rates, saving you around {discount}% over other platforms."
+
+            img_url = random.choice(unsplash_by_cat[cat_name])
+            img_url += f"&sig={random.randint(1, 1000)}"
+
+            tags = f"{cat_name.lower()} {brand.lower()} {adj.lower()} {noun.lower()} best quality value saving"
+
+            Product.objects.create(
+                name=p_name,
+                category=cat_obj,
+                our_price=our_price,
+                amazon_price=amazon_price,
+                flipkart_price=flipkart_price,
+                amazon_url=f"https://www.amazon.in/s?k={p_name.replace(' ', '+')}",
+                flipkart_url=f"https://www.flipkart.com/search?q={p_name.replace(' ', '+')}",
+                image_url=img_url,
+                rating=round(random.uniform(3.9, 4.9), 1),
+                reviews_count=random.randint(30, 8500),
+                stock=random.randint(10, 120),
+                brand=brand,
+                ai_summary=ai_summary,
+                is_featured=random.choice([True, False, False, False]),
+                is_ai_recommended=random.choice([True, False, False, False]),
+                tags=tags,
+                eco_rating=random.randint(65, 98)
+            )
+            extra_count += 1
+
+        self.stdout.write(f'[OK] Generated {extra_count} additional dynamic products.')
         self.stdout.write('')
         self.stdout.write(self.style.SUCCESS('Database seeded successfully!'))
         self.stdout.write('   Admin: http://127.0.0.1:8000/admin/')
