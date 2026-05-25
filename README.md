@@ -36,11 +36,13 @@ Admin: **http://127.0.0.1:8000/admin/** (admin / admin123)
 ---
 
 ### AI Features Setup
-1. Get a free API key at https://console.anthropic.com
+1. Get a free API key at https://console.anthropic.com (for Claude) or https://aistudio.google.com (for Google Gemini).
 2. Copy `.env.example` → `.env`
-3. Add your key: `ANTHROPIC_API_KEY=sk-ant-...`
+3. Add your key(s):
+   `ANTHROPIC_API_KEY=sk-ant-...`
+   `GEMINI_API_KEY=AIzaSy...`
 
-**Without API key:** All features work but AI responses show a placeholder message.
+**Without API keys:** The system automatically falls back to the built-in local Intelligent AI Engine, which provides realistic, dynamically generated shopper stylist recommendations, search filters, review sentiment analytics, and price prediction charts based on live database metrics.
 
 ---
 

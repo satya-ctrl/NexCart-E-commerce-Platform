@@ -245,10 +245,14 @@
         </a>
 
         <div class="hidden md:flex items-center gap-6">
-            <a href="/products/" class="nav-link text-slate-300 text-sm">Products</a>
-            <a href="/products/?category=electronics" class="nav-link text-slate-300 text-sm">Electronics</a>
+            <a href="/products/" class="nav-link text-slate-300 text-sm">All Products</a>
+            <a href="/products/?category=clothing-apparel" class="nav-link text-slate-300 text-sm">Clothing</a>
+            <a href="/products/?category=footwear" class="nav-link text-slate-300 text-sm">Footwear</a>
+            <a href="/products/?category=makeup-cosmetics" class="nav-link text-slate-300 text-sm">Cosmetics</a>
+            <a href="/products/?category=fashion-accessories" class="nav-link text-slate-300 text-sm">Accessories</a>
+            <a href="/products/?category=electronics" class="nav-link text-slate-300 text-sm">Tech</a>
             <a href="/ai/dashboard/" class="nav-link text-slate-300 text-sm flex items-center gap-1">
-                <i class="fas fa-robot text-violet-400 text-xs"></i> AI Features
+                <i class="fas fa-robot text-violet-400 text-xs"></i> AI Stylist
             </a>
         </div>
 
@@ -394,7 +398,7 @@
         <button onclick="toggleChat()" class="text-slate-500 hover:text-white"><i class="fas fa-times"></i></button>
     </div>
     <div id="chat-messages">
-        <div class="msg-bot text-sm">👋 Hi! I'm ShopBot, your AI shopping assistant. Ask me anything — find products, compare prices, or get recommendations!</div>
+        <div class="msg-bot text-sm">👋 Hi! I'm **ShopBot AI**, your elite personal Fashion Stylist and Smart Shopping Assistant. ✨ Ask me anything—I can curate perfect outfit recommendations, run real-time price comparisons, predict trends, or analyze reviews for you! What are we shopping for today?</div>
     </div>
     <div class="p-3 border-t border-white/10 flex gap-2">
         <input id="chat-input" type="text" placeholder="Ask me anything..." class="flex-1 bg-white/5 border border-white/10 rounded-full px-4 py-2 text-sm text-white focus:outline-none focus:border-violet-500" onkeypress="if(event.key==='Enter')sendChat()">

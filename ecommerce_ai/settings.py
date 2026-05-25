@@ -77,6 +77,7 @@ LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
 ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY', '')
+GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', '')
 
 CSRF_TRUSTED_ORIGINS = [
     'https://nexcart-e-commerce-platform-production.up.railway.app',

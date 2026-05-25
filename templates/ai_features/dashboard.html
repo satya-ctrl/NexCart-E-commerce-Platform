@@ -12,26 +12,26 @@
         <div class="flex items-center gap-3 mb-6">
             <div class="w-10 h-10 rounded-2xl bg-violet-600/20 flex items-center justify-center text-xl">🎯</div>
             <div>
-                <h2 class="font-display font-bold text-xl">AI Product Recommendation</h2>
-                <p class="text-slate-500 text-sm">Tell us your needs, Claude AI finds your perfect product</p>
+                <h2 class="font-display font-bold text-xl">AI Stylist Recommendation</h2>
+                <p class="text-slate-500 text-sm">Tell us your style goals, ShopBot AI finds your perfect product</p>
             </div>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
             <div>
                 <label class="text-xs text-slate-400 block mb-1 font-semibold uppercase tracking-wide">Budget (₹)</label>
-                <input id="rec-budget" type="number" placeholder="e.g. 15000" class="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-violet-500">
+                <input id="rec-budget" type="number" placeholder="e.g. 3000" class="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-violet-500">
             </div>
             <div>
                 <label class="text-xs text-slate-400 block mb-1 font-semibold uppercase tracking-wide">Category</label>
-                <input id="rec-cat" type="text" placeholder="e.g. Electronics" class="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-violet-500">
+                <input id="rec-cat" type="text" placeholder="e.g. Clothing & Apparel" class="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-violet-500">
             </div>
             <div>
                 <label class="text-xs text-slate-400 block mb-1 font-semibold uppercase tracking-wide">Preferences</label>
-                <input id="rec-pref" type="text" placeholder="e.g. long battery, lightweight" class="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-violet-500">
+                <input id="rec-pref" type="text" placeholder="e.g. floral print, slim fit, medium size" class="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-violet-500">
             </div>
         </div>
         <button onclick="getRecommendations()" class="btn-primary px-6 py-2.5 rounded-xl text-white text-sm font-semibold">
-            <i class="fas fa-robot mr-2"></i> Get AI Recommendations
+            <i class="fas fa-robot mr-2"></i> Get Stylist Recommendations
         </button>
         <div id="rec-results" class="mt-5 hidden"></div>
     </div>
@@ -42,10 +42,10 @@
             <div class="w-10 h-10 rounded-2xl bg-cyan-600/20 flex items-center justify-center text-xl">💬</div>
             <div>
                 <h2 class="font-display font-bold text-xl">AI Review Sentiment Analysis</h2>
-                <p class="text-slate-500 text-sm">Paste product reviews and Claude AI will analyze the sentiment</p>
+                <p class="text-slate-500 text-sm">Paste product reviews and ShopBot AI will analyze the sentiment</p>
             </div>
         </div>
-        <textarea id="sentiment-input" rows="5" placeholder="Paste multiple reviews here (one per line)...&#10;e.g. Great product, very fast delivery!&#10;Battery life is terrible, disappointed.&#10;Good value for money, would recommend." class="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-sm text-slate-300 focus:outline-none focus:border-cyan-500 resize-none mb-4"></textarea>
+        <textarea id="sentiment-input" rows="5" placeholder="Paste multiple reviews here (one per line)...&#10;e.g. Amazing summer dress, fits perfectly and fabric is so soft!&#10;The color of the lipstick didn't match the photo, disappointing.&#10;Excellent quality leather, very comfortable formal shoes." class="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-sm text-slate-300 focus:outline-none focus:border-cyan-500 resize-none mb-4"></textarea>
         <button onclick="runSentiment()" class="btn-cyan px-6 py-2.5 rounded-xl text-white text-sm font-semibold">
             <i class="fas fa-brain mr-2"></i> Analyze Sentiment
         </button>
@@ -58,7 +58,7 @@
             <div class="w-10 h-10 rounded-2xl bg-green-600/20 flex items-center justify-center text-xl">📈</div>
             <div>
                 <h2 class="font-display font-bold text-xl">AI Price Prediction</h2>
-                <p class="text-slate-500 text-sm">Enter product ID and Claude AI predicts future price trends</p>
+                <p class="text-slate-500 text-sm">Select a product and ShopBot AI predicts future price trends</p>
             </div>
         </div>
         <div class="flex gap-3">
@@ -81,11 +81,11 @@
             <div class="w-10 h-10 rounded-2xl bg-yellow-600/20 flex items-center justify-center text-xl">🔍</div>
             <div>
                 <h2 class="font-display font-bold text-xl">AI Smart Search</h2>
-                <p class="text-slate-500 text-sm">Natural language search — describe what you need, Claude finds it</p>
+                <p class="text-slate-500 text-sm">Natural language search — describe what you are looking for, ShopBot AI finds it</p>
             </div>
         </div>
         <div class="flex gap-3">
-            <input id="ss-input" type="text" placeholder='e.g. "best wireless earbuds under 2000 with noise cancellation"' class="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-yellow-500" onkeypress="if(event.key==='Enter')runSmartSearch()">
+            <input id="ss-input" type="text" placeholder='e.g. "floral summer dress or leather boots under 5000"' class="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-yellow-500" onkeypress="if(event.key==='Enter')runSmartSearch()">
             <button onclick="runSmartSearch()" class="bg-yellow-600 hover:bg-yellow-500 transition-colors px-6 py-2.5 rounded-xl text-white text-sm font-semibold">Search</button>
         </div>
         <div id="ss-out" class="mt-5 hidden"></div>
@@ -148,7 +148,7 @@ async function getRecommendations() {
     const category = document.getElementById('rec-cat').value;
     const preferences = document.getElementById('rec-pref').value;
     const div = document.getElementById('rec-results');
-    div.innerHTML = '<div class="text-sm text-slate-400 animate-pulse">🤖 Claude AI is finding your perfect products...</div>';
+    div.innerHTML = '<div class="text-sm text-slate-400 animate-pulse">🤖 ShopBot AI is finding your perfect products...</div>';
     div.classList.remove('hidden');
     const res = await fetch('/ai/recommend/', {
         method: 'POST',
@@ -205,7 +205,7 @@ async function runPricePred() {
     const pid = document.getElementById('pred-pid').value;
     if (!pid) return;
     const div = document.getElementById('pred-out');
-    div.innerHTML = '<div class="text-sm text-slate-400 animate-pulse">📈 AI analyzing market trends...</div>';
+    div.innerHTML = '<div class="text-sm text-slate-400 animate-pulse">📈 ShopBot AI analyzing market trends...</div>';
     div.classList.remove('hidden');
     const res = await fetch('/ai/price-predict/', {
         method: 'POST',
